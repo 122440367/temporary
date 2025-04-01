@@ -11,6 +11,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn' //引入中文语言包
 import App from './App.vue'
 
 
+
 const app = createApp(App)
 
 app.use(createPinia())
@@ -20,8 +21,17 @@ app.use(ElementPlus, {
     locale: zhCn,
 })
 
-// console.log(import.meta.env) //获取当前环境变量
+
 
 import 'virtual:svg-icons-register' //引入svg图标注册
+
+//引入自定义插件对象：注册整个项目全局组件
+import globalComponent from '@/components'
+//安装自定义插件
+app.use(globalComponent)
+
+
+
+import '@/style/index.scss' //引入全局样式
 
 app.mount('#app')
