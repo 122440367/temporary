@@ -5,7 +5,7 @@ import { ElMessage } from "element-plus";
 //step 1：利用axios的create方法创建一个axios实例 （其他配置：基础路径、超时时间）
 let request = axios.create({
     //基础路径
-    baseURL: import.meta.env.VITE_APP_BASE_API,//基础路径会携带/api
+    baseURL: import.meta.env.VITE_APP_API_URL,//基础路径会携带/api
     timeout: 5000 // 超时时间的设置
 });
 
@@ -56,6 +56,6 @@ request.interceptors.response.use((response) => {
 });
 
 
-
+// console.log(import.meta.env.VITE_APP_API_URL);
 //对外暴露
 export default request
