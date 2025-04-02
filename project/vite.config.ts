@@ -10,28 +10,36 @@ import path from 'node:path'
 
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    vue(),
-    vueJsx(),
-    vueDevTools(),
-    createSvgIconsPlugin({
-      iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
-      symbolId: 'icon-[dir]-[name]',
-    })
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
-  },
+import { UserConfigExport, ConfigEnv } from 'vite'
 
-  //scss全局变量的配置
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: '@import "@/style/variables.scss";'
+import { viteMockServe } from 'vite-plugin-mock'
+
+export default ({ command }: ConfigEnv): UserConfigExport => {
+  return {
+    plugins: [
+      vue(),
+      vueJsx(),
+      vueDevTools(),
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+        symbolId: 'icon-[dir]-[name]',
+      }),
+      viteMockServe({
+        mockPath: 'mock',
+        enable: command === 'serve', // 保证在开发环境下能使用mock
+      }),
+    ],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "@/style/variables.scss" as *;'
+        }
       }
     }
   }
-})
+}

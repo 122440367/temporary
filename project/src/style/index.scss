@@ -1,1 +1,5 @@
-@import './reset.scss';
+@use './reset.scss';
+//这里一开始用import 但是import被弃用
+//考虑换use 但是改成use之后报错 询问ai后发现   Vite 的 additionalData 配置未正确处理 @use
+//问题：在 vite.config.ts 中，additionalData 配置可能仍然使用了 @import，而 @use 的语法需要调整。
+//解决方法：将 additionalData 中的 @import 替换为 @use
