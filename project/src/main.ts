@@ -1,14 +1,10 @@
 
 import '@/style/index.scss' //引入全局样式
-
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-//引入ElementPlus及样式
+import { createPinia } from 'pinia'         //引入ElementPlus及样式
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-//配置element-plus国际化
+import 'element-plus/dist/index.css'        //配置element-plus国际化
 import zhCn from 'element-plus/es/locale/lang/zh-cn' //引入中文语言包
-
 import App from './App.vue'
 
 
@@ -30,6 +26,7 @@ import 'virtual:svg-icons-register' //引入svg图标注册
 import globalComponent from '@/components'
 //安装自定义插件
 app.use(globalComponent)
+
 
 
 
