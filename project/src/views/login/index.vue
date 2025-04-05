@@ -44,8 +44,8 @@ let loading = ref(false);
 let useStore = useUserStore();
 
 let loginForm = reactive({
-    username: 'admin',
-    password: '123456'
+    username: '',
+    password: ''
 });
 
 
@@ -81,10 +81,10 @@ const login = async () => {
 //函数：符合条件callback放行通过
 //如果不符合条件callback方法，注入错误信息
 const valadatorUsername=(rule:any,value:any,callback:any)=>{
-    if(value.length>=6){
+    if(value.length>=5){
         callback();
     }else{
-        callback(new Error('账号长度至少为6'));
+        callback(new Error('账号长度至少为5位'));
     }
 }
 const validatorPassword=(rule:any,value:any,callback:any)=>{
