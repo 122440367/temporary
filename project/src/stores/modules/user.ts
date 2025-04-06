@@ -1,6 +1,6 @@
 //创建用户相关的小仓库
 import { defineStore } from 'pinia'
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 //引入接口
 import { reqLogin } from '@/api/user';
@@ -13,11 +13,15 @@ import { SET_TOKEN, GET_TOKEN } from '@/utils/token';
 
 import { computed } from 'vue';
 
+//引入路由
+import { constantRoute } from '@/router/routes';
+
 //创建用户小仓库
 let useUserStore = defineStore('User', () => {
     // state
     const state = ref<UserState>({
         token: GET_TOKEN(), // 从 localStorage 初始化 token
+        menuRoutes: [] // 菜单路由
     });
 
     // actions
@@ -41,10 +45,13 @@ let useUserStore = defineStore('User', () => {
     // getters
     const isLoggedIn = computed(() => !!state.value.token);
 
+    const menuRoutes = reactive(constantRoute); //仓库存储生成菜单需要的路由
+
     return {
         state,
         userLogin,
         isLoggedIn,
+        menuRoutes
     };
 });
 
