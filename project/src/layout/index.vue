@@ -3,15 +3,20 @@
         <!-- 左侧菜单 -->
         <div class="layout_sidebar">
             <Logo></Logo>
+
+            <!-- 滚动菜单 -->
+            <el-scrollbar class="scrollbar">
+                <el-menu background-color="$base-menu-background" text-color="white">
+                    <!-- 根据路由动态生成菜单 -->
+                    <Menu :menu-list="userStore.menuRoutes"></Menu>
+                </el-menu>
+            </el-scrollbar>
         </div>
         <!-- 顶部tabbar -->
-        <div class="layout_tabbar">456</div>
+        <div class="layout_tabbar"></div>
         <!-- 主要内容区 -->
         <div class="layout_main">
-            <p class="test">
 
-
-            </p>
         </div>
 
     </div>
@@ -22,8 +27,12 @@
 import { useRouter } from 'vue-router';
 import { GET_TOKEN } from '@/utils/token';
 import Logo from './logo/index.vue';
+import Menu from './menu/index.vue';
+import useUserStore from '@/stores/modules/user';
+
 
 let $router = useRouter();
+let userStore = useUserStore();
 
 const redirect = () => {
     const token = GET_TOKEN();
@@ -40,6 +49,7 @@ redirect();
 .layout_container {
     width: 100%;
     height: 100vh;
+
     // position: relative;
     .layout_sidebar {
         width: $base-menu-width;
@@ -65,8 +75,14 @@ redirect();
         overflow: auto;
     }
 
-    .test {
-        height: 10000px;
+    .scrollbar {
+        height: calc(100vh - $base-tabbar-height - 50px);
+        width: 100%;
+
+        .el-menu{
+            border: none;
+        }
     }
+
 }
 </style>
