@@ -13,10 +13,12 @@
             </el-scrollbar>
         </div>
         <!-- 顶部tabbar -->
-        <div class="layout_tabbar"></div>
+        <div class="layout_tabbar">
+            test
+        </div>
         <!-- 主要内容区 -->
         <div class="layout_main">
-
+            <Main></Main>
         </div>
 
     </div>
@@ -29,7 +31,7 @@ import { GET_TOKEN } from '@/utils/token';
 import Logo from './logo/index.vue';
 import Menu from './menu/index.vue';
 import useUserStore from '@/stores/modules/user';
-
+import Main from './main/index.vue';
 
 let $router = useRouter();
 let userStore = useUserStore();
@@ -84,5 +86,13 @@ redirect();
         }
     }
 
+}
+
+.layout_tabbar{
+    background-color: aqua;
+}
+
+.layout_main{
+    background-color: blueviolet;
 }
 </style>
