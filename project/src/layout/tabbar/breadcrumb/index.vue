@@ -3,8 +3,16 @@
         <component :is="LayOutSettingStore.fold ? 'Expand' : 'Fold'"></component>
     </el-icon>
     <el-breadcrumb separator="/">
-        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+        <el-breadcrumb-item v-for="(item,index) in $route.matched" :key="index" v-show="item.meta.title" :to="item.path">
+            <el-icon size="15" >
+                <component :is="item.meta.icon"></component>
+            </el-icon>
+        
+            <span style="margin:0px 7px; font-size: 18px;">
+                {{ item.meta.title }}
+            </span>
+        </el-breadcrumb-item>
+
     </el-breadcrumb>
 </template>
 

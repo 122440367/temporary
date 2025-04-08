@@ -25,6 +25,7 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 10px;
+
     img {
         width: 120px;
         // height: 120px;
@@ -33,6 +34,8 @@ export default {
     p {
         margin-left: 10px;
         font-size: $base-logo-title-fontsize;
+        white-space: nowrap;
+        overflow: hidden;
     }
 }
 </style>
