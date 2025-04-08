@@ -1,5 +1,5 @@
 <template>
-    sku管理
+    <div>sku管理</div>
 </template>
 <script setup lang="ts">
 

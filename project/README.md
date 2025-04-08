@@ -23,6 +23,27 @@
 
 ## 学习时的一些心得
 
-项目的路由页面：一级路由都在layout上通过左侧的菜单展示出来(当然有一部分页面没必要出现故隐藏),所以路由配置的component都是layout/index.vue，二级路由(最终需要展示的部分)则在layout骨架上的展示区展示各自的组件(注意路由的错误会导致页面无法正常加载 比如tmd`path`写成`Path`)    
+项目的路由页面：一级路由都在layout上通过左侧的菜单展示出来(当然有一部分页面没必要出现故隐藏),所以路由配置的component都是layout/index.vue，二级路由(最终需要展示的部分)则在layout骨架上的展示区展示各自的组件(注意路由的错误会导致页面无法正常加载 比如tmd`path`写成`Path`)  
 
 注意setup语法糖的默认导出 和 script手写导出的组件名称(写setting/index.vue时卡过手)
+
+## 遇到的bug和解决途径
+
+    menu.ts:162
+    [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+    at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/acl/user" >
+    at <BaseTransition appear=false persisted=false mode=undefined ... >
+    at <Transition name="fade" >
+    at <RouterView >
+    at <Main >
+    at <Layout onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref<
+    Proxy(Object) {__v_skip: true}
+
+    at <RouterView >
+    at <App>
+    Promise.then
+    handleMenuItemClick @ menu.ts:162 
+
+在点击左侧菜单进行路由跳转时，第一次点击往往无效并报错，第二次点击正常跳转，但控制台会频繁报错(每次点击都报出上述警告)  
+参考了别人代码后选择删掉Menu组件里goRoute的@click事件，而是在其父组件layout的el-menu组件中加了新的API配置项  `:router="true"`，到这里实现了单次点击即可跳转，但是控制台仍抛出警告  
+细看警告内容发现，问题的根本原因是 `<Transition>` 组件包裹的内容不是有效的 DOM 元素，而是一个非元素根节点（如 null 或 undefined），于是找到main组件查看`<Transition>`标签，确认了配置正确后去检查了相应路由组件，最后发现当初写这些路由组件时图省事在`template`中只写了标识文字而没有写html标签，添加上div包裹后问题解决

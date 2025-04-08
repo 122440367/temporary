@@ -1,5 +1,5 @@
 <template>
-    品牌管理
+    <div>品牌管理</div>
 </template>
 
 <script setup lang="ts">
