@@ -30,7 +30,7 @@
 import { User, Lock } from '@element-plus/icons-vue';
 import { reactive, ref } from 'vue';
 import useUserStore from '@/stores/modules/user';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { ElNotification } from 'element-plus';
 import { getTime } from '@/utils/time';
 
@@ -38,6 +38,7 @@ import { getTime } from '@/utils/time';
 let loginForms = ref();
 
 let $router = useRouter();
+let $route = useRoute();
 
 let loading = ref(false);
 
@@ -52,15 +53,16 @@ let loginForm = reactive({
 const login = async () => {
     //保证表单验证通过再发请求
     await loginForms.value.validate();
-    
+
     loading.value = true;
     //通知仓库发登录请求
     //成功-》首页展示数据页面
     //失败-》提示错误信息
     try {
         await useStore.userLogin(loginForm);
-        //登录成功，编程式导航跳转到首页
-        $router.push('/');
+        //登录成功，编程式导航跳转
+        let redirect = $route.query.redirect;
+        $router.push({path:redirect as string || '/home'});
         ElNotification({
             type: 'success',
             message: "Welcome Home",
@@ -80,17 +82,17 @@ const login = async () => {
 //callback-->校验结果的回调函数，参数为一个布尔值，true表示校验通过，false表示校验不通过
 //函数：符合条件callback放行通过
 //如果不符合条件callback方法，注入错误信息
-const valadatorUsername=(rule:any,value:any,callback:any)=>{
-    if(value.length>=5){
+const valadatorUsername = (rule: any, value: any, callback: any) => {
+    if (value.length >= 5) {
         callback();
-    }else{
+    } else {
         callback(new Error('账号长度至少为5位'));
     }
 }
-const validatorPassword=(rule:any,value:any,callback:any)=>{
-    if(value.length>=6 && value.length<=15){
+const validatorPassword = (rule: any, value: any, callback: any) => {
+    if (value.length >= 6 && value.length <= 15) {
         callback();
-    }else{
+    } else {
         callback(new Error('密码长度在6到15位'));
     }
 }
@@ -104,11 +106,11 @@ const rules = {
     //trigger 触发方式 blur(失去焦点) change(值改变) submit(提交表单)
     username: [
         // { required: true, min: 6, message: '账号长度至少为6', trigger: 'change' }
-        {validator:valadatorUsername,trigger:'change'}
+        { validator: valadatorUsername, trigger: 'change' }
     ],
     password: [
         // { required: true, min: 6, max: 15, message: '密码长度在6到15位', trigger: 'change' }
-        {validator:validatorPassword,trigger:'change'}
+        { validator: validatorPassword, trigger: 'change' }
     ]
 }
 

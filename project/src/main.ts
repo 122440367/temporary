@@ -10,6 +10,7 @@ import 'virtual:svg-icons-register' //引入svg图标注册
 import globalComponent from '@/components'
 import router from '@/router' //引入路由器对象
 import pinia from '@/stores' //引入仓库对象
+import './permission'
 
 const app = createApp(App)
 

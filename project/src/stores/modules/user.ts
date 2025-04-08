@@ -6,7 +6,7 @@ import { reqLogin,reqUserInfo } from '@/api/user';
 //引入类型
 import type { loginForm, loginResponseData } from '@/api/user/type';
 import type { UserState } from '@/stores/modules/types/type';
-import { SET_TOKEN, GET_TOKEN } from '@/utils/token';
+import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils/token';
 import { computed } from 'vue';
 
 //引入路由
@@ -46,10 +46,17 @@ let useUserStore = defineStore('User', () => {
             state.value.avatar = result.data.checkUser.avatar; // 将头像存储到state中
             return 'ok';
         }else{
-
+            return Promise.reject('获取用户信息失败'); // 返回失败的promise对象
         }
     }
 
+    const userLogout = () => {
+        //目前没有退出登录的接口，所以直接清除token
+        state.value.token = ''; // 清除token
+        state.value.username = ''; // 清除用户名
+        state.value.avatar = ''; // 清除头像
+        REMOVE_TOKEN(); // 清除localStorage中的token
+    }
 
 
     // getters
@@ -62,7 +69,8 @@ let useUserStore = defineStore('User', () => {
         userLogin,
         isLoggedIn,
         menuRoutes,
-        userInfo
+        userInfo,
+        userLogout
     };
 });
 
