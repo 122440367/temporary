@@ -12,11 +12,17 @@
 </template>
 
 <script setup lang="ts">
-import { Expand } from '@element-plus/icons-vue';
+
 import Breadcrumb from '@/layout/tabbar/breadcrumb/index.vue';
 import Setting from '@/layout/tabbar/setting/index.vue';
 
 </script>
+<script lang="ts">
+export default {
+    name: 'Tabbar'
+};
+</script>
+
 
 <style lang="scss">
 .tabbar {

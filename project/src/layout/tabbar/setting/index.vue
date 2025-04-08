@@ -17,3 +17,8 @@
         </template>
     </el-dropdown>
 </template>
+<script lang="ts">
+export default {
+    name: 'Setting'
+};
+</script>

@@ -10,6 +10,12 @@
 
 <script setup lang="ts" >
 </script>
+<script lang="ts">
+export default {
+    name: 'Main'
+};
+</script>
+
 
 <style scoped lang="scss">
 .fade-enter-from {
