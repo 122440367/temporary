@@ -1,16 +1,12 @@
 //创建用户相关的小仓库
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue';
-
 //引入接口
-import { reqLogin } from '@/api/user';
-
+import { reqLogin,reqUserInfo } from '@/api/user';
 //引入类型
 import type { loginForm, loginResponseData } from '@/api/user/type';
 import type { UserState } from '@/stores/modules/types/type';
-
 import { SET_TOKEN, GET_TOKEN } from '@/utils/token';
-
 import { computed } from 'vue';
 
 //引入路由
@@ -21,7 +17,9 @@ let useUserStore = defineStore('User', () => {
     // state
     const state = ref<UserState>({
         token: GET_TOKEN(), // 从 localStorage 初始化 token
-        menuRoutes: [] // 菜单路由
+        menuRoutes: [], // 菜单路由
+        username: '', // 用户名
+        avatar: '', // 头像
     });
 
     // actions
@@ -41,6 +39,18 @@ let useUserStore = defineStore('User', () => {
             return Promise.reject(new Error(result.data.message)); // 返回失败的promise对象
         }
     };
+    const userInfo = async () => {
+        let result = await reqUserInfo();
+        if (result.code == 200) {
+            state.value.username = result.data.checkUser.username; // 将用户名存储到state中
+            state.value.avatar = result.data.checkUser.avatar; // 将头像存储到state中
+            return 'ok';
+        }else{
+
+        }
+    }
+
+
 
     // getters
     const isLoggedIn = computed(() => !!state.value.token);
@@ -51,7 +61,8 @@ let useUserStore = defineStore('User', () => {
         state,
         userLogin,
         isLoggedIn,
-        menuRoutes
+        menuRoutes,
+        userInfo
     };
 });
 

@@ -7,22 +7,16 @@
 
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { GET_TOKEN } from '@/utils/token';
 
-let $router = useRouter();
+import { onMounted } from 'vue';
 
-const redirect = () => {
-    // 获取 token
-    const token = GET_TOKEN();
-    // 如果没有 token，跳转到登录页面
-    if (!token) {
-        $router.push('/login'); // 使用 Vue Router 的编程式导航
-    }
-};
+import useUserStore from '@/stores/modules/user';
+let userStore = useUserStore();
 
-// 调用函数
-redirect();
+
+onMounted(() => {
+   userStore.userInfo();
+});
 </script>
 
 <style scoped></style>
