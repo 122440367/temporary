@@ -6,7 +6,7 @@
 
             <!-- 滚动菜单 -->
             <el-scrollbar class="scrollbar">
-                <el-menu background-color="$base-menu-background" text-color="white">
+                <el-menu background-color="$base-menu-background" text-color="white" :default-active="$route.path">
                     <!-- 根据路由动态生成菜单 -->
                     <Menu :menu-list="userStore.menuRoutes"></Menu>
                 </el-menu>
@@ -14,7 +14,7 @@
         </div>
         <!-- 顶部tabbar -->
         <div class="layout_tabbar">
-            test
+            <Tabbar></Tabbar>
         </div>
         <!-- 主要内容区 -->
         <div class="layout_main">
@@ -32,8 +32,11 @@ import Logo from './logo/index.vue';
 import Menu from './menu/index.vue';
 import useUserStore from '@/stores/modules/user';
 import Main from './main/index.vue';
+// import { useRoute } from 'vue-router';
+import Tabbar from './tabbar/index.vue';
 
 let $router = useRouter();
+// let $route = useRoute();
 let userStore = useUserStore();
 
 const redirect = () => {
@@ -57,6 +60,7 @@ redirect();
         width: $base-menu-width;
         height: 100%;
         background: $base-menu-background;
+        color:white;
     }
 
     .layout_tabbar {
@@ -89,7 +93,7 @@ redirect();
 }
 
 .layout_tabbar{
-    background-color: aqua;
+
 }
 
 .layout_main{
