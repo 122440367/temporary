@@ -75,7 +75,7 @@ export default {
 
         &.fold {
             width: $base-menu-min-width;
-            
+
         }
 
         .scrollbar {
