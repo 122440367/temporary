@@ -41,11 +41,11 @@ let fullScreen = () => {
 const $router = useRouter();
 const $route = useRoute();
 
-const logout = () => {
+const logout =async () => {
     //1. 向后端发送请求
     //2. 仓库中关于用户相关的信息[token、username等]清空
     //3. 跳转到登录页面
-    userStore.userLogout();
+    await userStore.userLogout();
     $router.push({path: '/login',query:{redirect:$route.path}});
 }
 

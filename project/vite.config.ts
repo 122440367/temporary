@@ -1,20 +1,16 @@
 import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
+import { ConfigEnv, defineConfig, loadEnv, UserConfigExport } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'node:path'
-
-
-
-// https://vite.dev/config/
-import { UserConfigExport, ConfigEnv } from 'vite'
-
 import { viteMockServe } from 'vite-plugin-mock'
 
-export default ({ command }: ConfigEnv): UserConfigExport => {
+export default ({ command, mode }: ConfigEnv): UserConfigExport => {
+  // 加载环境变量
+  const env = loadEnv(mode, process.cwd())
+
   return {
     plugins: [
       vue(),
@@ -40,6 +36,20 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
           additionalData: '@use "@/style/variables.scss" as *;'
         }
       }
+    },
+    server: {
+      proxy: {
+        [env.VITE_APP_API_URL]: {
+          target: env.VITE_SERVE, // 使用环境变量
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
+    },
+    define: {
+      __APP_TITLE__: JSON.stringify(env.VITE_APP_TITLE), // 注入全局变量
     }
   }
 }
+
+

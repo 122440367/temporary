@@ -18,6 +18,7 @@
 16. 设置了顶部面包屑基于路由的动态展示和右侧控件的功效
 17. 完成了获取用户信息的部分(利用pinia仓库 登陆后在组件挂载时带着token发请求获取用户信息(axios拦截器中将token作为公共参数)，将返回的数据存入pinia仓库并展示在页面)
 18. 退出登录的业务以及路由鉴权（在路由守卫发请求获取用户信息）
+19. 将mock接口替换成了真实接口并处理了一些相关业务(特别是路由鉴权部分)，更新了user仓库的代码使得local和仓库的token时刻保持一致
 
 ## 学习过程中发现的比较重要的知识点
 
@@ -78,6 +79,8 @@
 
 ## 遇到的bug和解决途径
 
+### fitst
+
     menu.ts:162
     [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
     at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< null > key="/acl/user" >
@@ -96,3 +99,50 @@
 在点击左侧菜单进行路由跳转时，第一次点击往往无效并报错，第二次点击正常跳转，但控制台会频繁报错(每次点击都报出上述警告)  
 参考了别人代码后选择删掉Menu组件里goRoute的@click事件，而是在其父组件layout的el-menu组件中加了新的API配置项  `:router="true"`，到这里实现了单次点击即可跳转，但是控制台仍抛出警告  
 细看警告内容发现，问题的根本原因是 `<Transition>` 组件包裹的内容不是有效的 DOM 元素，而是一个非元素根节点（如 null 或 undefined），于是找到main组件查看`<Transition>`标签，确认了配置正确后去检查了相应路由组件，最后发现当初写这些路由组件时图省事在`template`中只写了标识文字而没有写html标签，添加上div包裹后问题解决
+
+### second
+
+在修改路由鉴权部分时，处理“token过期导航至login界面”的逻辑时，仔细研究了一下执行流程，认定在手动修改token或者token过期情况下，由于各个钩子频繁抛出异常/错误，导致本地的token和仓库数据实际上都没有被清空，使得路由守卫无法正确处理跳转(因为这时候路由守卫还能读到token、ussername等)，最后就无法进入向登录页跳转的catch块(我估计是在这样那样的next里面不停跳了，因为带了错误的token导致userinf也好loggout也好不停抛出异常 也就导致进度条动画一直不停--因为到不了after路由守卫)(看得出来这个项目写的很屎了)
+
+    const userLogout = async () => {
+        let result = await reqLogout();
+        if (result.code == 200) {
+            // 退出登录成功
+            state.value.token = null; // 清空 token
+            state.value.username = ''; // 清空用户名
+            state.value.avatar = ''; // 清空头像
+            REMOVE_TOKEN(); // 删除 token
+            return 'ok';
+        } else {
+            return Promise.reject(new Error(result.message)); // 返回失败的 promise 对象
+        }
+    };
+------
+    const token = userStore.state.token;
+    const username = userStore.state.username;
+
+    if (token) {
+        if (to.path === '/login') {
+            next({ path: '/' }); // 如果访问的是登录页面，跳转到首页
+        } else {
+            if (username) {
+                next(); // 如果用户名存在，直接放行
+            } else {
+                try {
+                    // 如果没有用户信息，尝试获取用户信息
+                    await userStore.userInfo(); 
+                    next(); // 放行
+                } catch (error) {
+                    // 如果获取用户信息失败（如 token 过期）
+                    await userStore.userLogout(); // 清除 token
+                    next({ path: '/login', query: { redirect: to.path } }); // 跳转到登录页面
+                }
+            }
+        }
+    } else {
+        if (to.path === '/login') {
+            next(); // 如果访问的是登录页面，直接放行
+        } else {
+            next({ path: '/login', query: { redirect: to.path } }); // 跳转到登录页面
+        }
+    }

@@ -12,46 +12,41 @@ let userStore = useUserStore(pinia)
 
 //全局守卫：项目当中任意路由切换都会触发的钩子
 //前置守卫：在路由跳转之前触发
-router.beforeEach(async(to, from, next) => {
-    document.title =setting.title+'-'+to.meta.title; //动态修改网页标题
-    //访问某个路由之前守卫
+router.beforeEach(async (to, from, next) => {
+    document.title = setting.title + '-' + to.meta.title; // 动态修改网页标题
+    nprogress.start(); // 开始进度条
 
-    nprogress.start(); //开始进度条
-    //获取token判断是否登录
-    let token = userStore.state.token; //获取token
-    let username=userStore.state.username; //获取用户名
+    // 获取 token 和用户名
+    const token = userStore.state.token;
+    const username = userStore.state.username;
 
     if (token) {
-        if(to.path === '/login') {
-            next({ path: '/' }); //如果访问的是登录页面，跳转到首页
-        }else{
+        if (to.path === '/login') {
+            next({ path: '/' }); // 如果访问的是登录页面，跳转到首页
+        } else {
             if (username) {
-                next(); //放行，继续访问 
+                next(); // 如果用户名存在，直接放行
             } else {
-               //无用户信息 发请求获取后放行
-               try{
-                await userStore.userInfo(); //获取用户信息
-                next(); //放行，继续访问
-               }catch(error){
-                //token过期：获取不到用户信息
-                //用户手动修改了token
-
-                //退出登录
-                userStore.userLogout(); //清除token
-                next({path:'/login',query:{redirect:to.path}});
-               }
+                try {
+                    // 如果没有用户信息，尝试获取用户信息
+                    await userStore.userInfo(); 
+                    next(); // 放行
+                } catch (error) {
+                    // 如果获取用户信息失败（如 token 过期）
+                    await userStore.userLogout(); // 清除 token
+                    next({ path: '/login', query: { redirect: to.path } }); // 跳转到登录页面
+                }
             }
         }
-
     } else {
         if (to.path === '/login') {
-            next(); //放行，继续访问 
+            next(); // 如果访问的是登录页面，直接放行
         } else {
-            next({ path: '/login', query: { redirect: to.path} }); //跳转到登录页面 
+            next({ path: '/login', query: { redirect: to.path } }); // 跳转到登录页面
         }
     }
 
-})
+});
 
 router.afterEach((to, from) => {
     nprogress.done(); //结束进度条

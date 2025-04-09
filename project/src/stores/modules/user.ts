@@ -1,10 +1,10 @@
 //创建用户相关的小仓库
 import { defineStore } from 'pinia'
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 //引入接口
-import { reqLogin,reqUserInfo } from '@/api/user';
-//引入类型
-import type { loginForm, loginResponseData } from '@/api/user/type';
+import { reqLogin, reqUserInfo, reqLogout } from '@/api/user';
+
+
 import type { UserState } from '@/stores/modules/types/type';
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils/token';
 import { computed } from 'vue';
@@ -22,12 +22,31 @@ let useUserStore = defineStore('User', () => {
         avatar: '', // 头像
     });
 
+
+    // 监听 localStorage 的变化
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'TOKEN') {
+            state.value.token = event.newValue || null; // 同步 token
+        }
+    });
+
+
+    watch(
+        () => state.value.token,
+        (newToken) => {
+            if (newToken) {
+                SET_TOKEN(newToken); // 更新 localStorage 中的 token
+            } else {
+                REMOVE_TOKEN(); // 清空 localStorage 中的 token
+            }
+        }
+    );
+
     // actions
-    const userLogin = async (data: loginForm) => {
+    const userLogin = async (data: any) => {
         // 登录请求
-        let result: loginResponseData = await reqLogin(data);
-        // console.log(result);
-        // 成功 -> 200，token     失败 -> 201，message
+        let result: any = await reqLogin(data);
+
         if (result.code == 200) {
             state.value.token = result.data.token ?? null; // 将token存储到state中
             SET_TOKEN(state.value.token || '');
@@ -36,28 +55,37 @@ let useUserStore = defineStore('User', () => {
             return 'ok';
         } else if (result.code == 201) {
             // console.log('登录失败')
-            return Promise.reject(new Error(result.data.message)); // 返回失败的promise对象
+            return Promise.reject(new Error(result.message)); // 返回失败的promise对象
         }
     };
     const userInfo = async () => {
         let result = await reqUserInfo();
         if (result.code == 200) {
-            state.value.username = result.data.checkUser.username; // 将用户名存储到state中
-            state.value.avatar = result.data.checkUser.avatar; // 将头像存储到state中
+            state.value.username = result.data.userInf.loginId; // 将用户名存储到state中
+            state.value.avatar = result.data.userInf.avatar; // 将头像存储到state中
             return 'ok';
-        }else{
-            return Promise.reject('获取用户信息失败'); // 返回失败的promise对象
+        } else {
+            return Promise.reject(new Error(result.message)); // 返回失败的promise对象
         }
     }
 
-    const userLogout = () => {
-        //目前没有退出登录的接口，所以直接清除token
-        state.value.token = ''; // 清除token
-        state.value.username = ''; // 清除用户名
-        state.value.avatar = ''; // 清除头像
-        REMOVE_TOKEN(); // 清除localStorage中的token
-    }
-
+    const userLogout = async () => {
+        try {
+            let result = await reqLogout();
+            if (result.code == 200) {
+                // console.log('退出登录成功');
+            }
+        } catch (error) {
+            // console.warn('退出登录时发生错误:', error.message);
+        } finally {
+            // 无论后端是否返回错误，都清除本地状态
+            state.value.token = null; // 清空 token
+            state.value.username = ''; // 清空用户名
+            state.value.avatar = ''; // 清空头像
+            REMOVE_TOKEN(); // 删除 token
+        }
+        return 'ok';
+    };
 
     // getters
     const isLoggedIn = computed(() => !!state.value.token);
