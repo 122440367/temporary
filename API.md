@@ -59,6 +59,12 @@
             "roleList": []
         }
     }
+    {
+    "success": false,
+    "code": 201,
+    "message": "token过期或不存在,请重新登录获取",
+    "data": {}
+    }
   ```
 
 ### 1.3 退出登录
@@ -74,6 +80,13 @@
     "message": "退出登录成功！",
     "data": {}
   }
+  {
+    "success": false,
+    "code": 201,
+    "message": "token过期或不存在,请重新登录获取",
+    "data": {}
+  }
+
   ```
 
 ---

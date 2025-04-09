@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { reactive, ref, watch } from 'vue';
 //引入接口
 import { reqLogin, reqUserInfo, reqLogout } from '@/api/user';
-
+import type { loginFormData, loginResponseData, userInfoResponseData } from "@/api/user/type";
 
 import type { UserState } from '@/stores/modules/types/type';
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils/token';
@@ -43,9 +43,9 @@ let useUserStore = defineStore('User', () => {
     );
 
     // actions
-    const userLogin = async (data: any) => {
+    const userLogin = async (data: loginFormData) => {
         // 登录请求
-        let result: any = await reqLogin(data);
+        let result: loginResponseData = await reqLogin(data);
 
         if (result.code == 200) {
             state.value.token = result.data.token ?? null; // 将token存储到state中
@@ -59,7 +59,7 @@ let useUserStore = defineStore('User', () => {
         }
     };
     const userInfo = async () => {
-        let result = await reqUserInfo();
+        let result: userInfoResponseData = await reqUserInfo();
         if (result.code == 200) {
             state.value.username = result.data.userInf.loginId; // 将用户名存储到state中
             state.value.avatar = result.data.userInf.avatar; // 将头像存储到state中
