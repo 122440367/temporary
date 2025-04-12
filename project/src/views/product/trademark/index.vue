@@ -59,7 +59,7 @@
         <!-- 将表单宽度调整为100%，并设置label-position为left -->
         <el-form ref="trademarkFormRef" style="width: 100%;" label-position="left" :rules="rules" :model="Param">
             <el-form-item label="品牌名称" label-width="80px" prop="tmName">
-                <el-input v-model="Param.tmName" placeholder="请输入品牌名称"></el-input>
+                <el-input v-model="Param.tmName" placeholder="请输入品牌名称" style="width: 80%;" ></el-input>
             </el-form-item>
             <el-form-item label="品牌Logo" label-width="80px" prop="logoUrl">
                 <el-upload class="avatar-uploader" action="/api/comm/file/upload" :show-file-list="false"
@@ -71,7 +71,7 @@
                 </el-upload>
             </el-form-item>
             <el-form-item label="备注" label-width="80px">
-                <el-input v-model="Param.remark" type="textarea" rows="3" placeholder="请输入备注信息"></el-input>
+                <el-input v-model="Param.remark" type="textarea" :rows="3" placeholder="请输入备注信息" style="width: 80%;"></el-input>
             </el-form-item>
         </el-form>
 
@@ -349,8 +349,8 @@ watch(() => reqData.tmName, (newValue, oldValue) => {
 
 <style scoped>
 .avatar-uploader .avatar {
-    width: 178px;
-    height: 178px;
+    width: 300px;
+    height: 200px;
     display: block;
 }
 
@@ -362,9 +362,9 @@ watch(() => reqData.tmName, (newValue, oldValue) => {
     margin-bottom: 20px;
 }
 
-.left-operation {
+/* .left-operation {
     /* 左侧按钮区域样式 */
-}
+/* } */ 
 
 .right-search {
     display: flex;
