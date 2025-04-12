@@ -98,8 +98,8 @@
 - **URL**:`product/brand/getpage`
 - **请求方式**：`POST/GET`
 - **请求参数**：
-  - `page`:
-  - `size`: 
+  - `page`: 当前页
+  - `size`: 分页大小
   - `tmName`：品牌名称(可选 用于搜索)
 - **返回数据**：
   

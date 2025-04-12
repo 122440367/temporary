@@ -3,10 +3,10 @@ export interface ResponseData {
     success: boolean;
     code: number;
     message: string;
-
+    
 }
 
-export interface reqTrademarkData{
+export interface reqTrademarkData {
     page?: number;
     size?: number;
     tmName?: string;
@@ -29,4 +29,24 @@ export interface trademarkResponseData extends ResponseData {
         size: number;
         records: Records;
     }
+}
+
+export interface AddTrademarkData {
+    tmName: string;
+    logoUrl?: string;
+    remark?: string;
+}
+
+export interface addTrademarkResponseData extends ResponseData {
+    data: {}
+}
+
+export interface UpdateTrademarkData {
+    id: number;
+    tmName?: string;
+    logoUrl?: string;
+    remark?: string;
+}
+export interface UpdateTrademarkResponseData extends ResponseData {
+    data: {}
 }
