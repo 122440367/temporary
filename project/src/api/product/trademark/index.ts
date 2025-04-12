@@ -2,10 +2,10 @@ import request from "@/utils/request";
 import type { reqTrademarkData, trademarkResponseData, AddTrademarkData, addTrademarkResponseData, UpdateTrademarkData, UpdateTrademarkResponseData } from "./type";
 
 enum API {
-    TRADEMARK_URL = '/product/brand/getpage',
-    ADD_TRADEMARK_URL = '/product/brand/add',
-    UPDATE_TRADEMARK_URL = '/product/brand/upd',
-    DELETE_TRADEMARK_URL = '/product/brand/del'
+    TRADEMARK_URL = '/product/brand/getpage',       // Get trademark list
+    ADD_TRADEMARK_URL = '/product/brand/add',       // Add trademark
+    UPDATE_TRADEMARK_URL = '/product/brand/upd',    // Update trademark
+    DELETE_TRADEMARK_URL = '/product/brand/del'     // Delete trademark
 }
 
 

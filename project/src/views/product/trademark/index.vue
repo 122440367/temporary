@@ -12,8 +12,11 @@
                 </el-table-column>
                 <el-table-column label="LOGO" align="center">
                     <template #default="{ row }">
-                        <img :src="row.logoUrl" alt="品牌LOGO" style="width: 100px; height: 60px">
+                        <img :src="handleImageUrl(row.logoUrl)" alt="品牌LOGO" style="width: 100px; height: 60px"
+                            @error="handleImageError">
                     </template>
+                </el-table-column>
+                <el-table-column label="备注" align="center" prop="remark" width="600px">
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="300px">
                     <template #default="{ row }">
@@ -34,35 +37,45 @@
 
 
     <!-- 对话框组件 -->
-    <el-dialog v-model="dialogFormVisible" title="添加品牌" width="500">
-        <el-form style="width: 80%;">
-            <el-form-item label="品牌名称" label-width="80px">
-                <el-input></el-input>
+    <el-dialog v-model="dialogFormVisible" :title="Param.id === -1 ? '添加品牌' : '修改品牌'" width="500">
+        <!-- 将表单宽度调整为100%，并设置label-position为left -->
+        <el-form ref="trademarkFormRef" style="width: 100%;" label-position="left" :rules="rules" :model="Param">
+            <el-form-item label="品牌名称" label-width="80px" prop="tmName">
+                <el-input v-model="Param.tmName" placeholder="请输入品牌名称"></el-input>
             </el-form-item>
-            <el-form-item label="品牌Logo" label-width="80px">
-                <el-upload class="avatar-uploader" action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                    :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <el-form-item label="品牌Logo" label-width="80px" prop="logoUrl">
+                <el-upload class="avatar-uploader" action="/api/comm/file/upload" :show-file-list="false"
+                    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <img v-if="Param.logoUrl" :src="handleImageUrl(Param.logoUrl)" class="avatar" />
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="备注" label-width="80px"></el-form-item>
+            <el-form-item label="备注" label-width="80px">
+                <el-input v-model="Param.remark" type="textarea" rows="3" placeholder="请输入备注信息"></el-input>
+            </el-form-item>
         </el-form>
 
         <template #footer>
-            <el-button type="primary" size="large" @click="cancel">取消</el-button>
-            <el-button type="primary" size="large" @click="confirm">确定</el-button>
+            <div class="dialog-footer">
+                <el-button @click="cancel">取消</el-button>
+                <el-button type="primary" @click="confirm">确定</el-button>
+            </div>
         </template>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { reqHasTrademark, reqdeleteTrademark, reqUpdateTrademark } from '@/api/product/trademark';
+import { reqHasTrademark, reqdeleteTrademark, reqUpdateTrademark, reqAddTrademark } from '@/api/product/trademark';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import type { Records, trademarkResponseData, reqTrademarkData, UpdateTrademarkData } from '@/api/product/trademark/type';
+import type { Records, trademarkResponseData, reqTrademarkData } from '@/api/product/trademark/type';
+import type { UploadProps } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
+
+// 添加表单引用
+const trademarkFormRef = ref<FormInstance | null>(null);
 
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(8);
@@ -76,7 +89,25 @@ let reqData = reactive<reqTrademarkData>({
     tmName: ''
 });
 
+const Param = reactive({
+    id: -1,
+    tmName: '',
+    logoUrl: '',
+    remark: ''
+});
+
 let trademarkArr = ref<Records>([]);
+
+// 表单验证规则
+const rules = reactive<FormRules>({
+    tmName: [
+        { required: true, message: '请输入品牌名称', trigger: 'blur' },
+        { min: 2, max: 20, message: '品牌名称长度在2到20个字符之间', trigger: 'blur' }
+    ],
+    logoUrl: [
+        { required: true, message: '请上传品牌Logo', trigger: 'change' }
+    ]
+});
 
 // 将获取品牌的接口封装为函数
 const getHasTrademark = async () => {
@@ -108,9 +139,13 @@ onMounted(() => {
 })
 
 const addTradeMark = () => {
+    // 重置表单数据
+    Param.id = -1;
+    Param.tmName = '';
+    Param.logoUrl = '';
+    Param.remark = '';
     // 打开添加品牌的对话框
     dialogFormVisible.value = true;
-
 }
 
 // 监听分页变化
@@ -156,26 +191,127 @@ const deleteTrademark = async (id: number) => {
     }
 }
 
-//未完成
+// 编辑品牌
 const UpdateTrademark = async (id: number) => {
-    let data: UpdateTrademarkData = {
-        id: 0,
-        tmName: '',
-        logoUrl: '',
-        remark: ''
+    try {
+        // 获取当前要编辑的品牌数据
+        const currentTrademark = trademarkArr.value.find(item => item.id === id);
+        if (currentTrademark) {
+            // 将数据赋值给表单
+            Param.id = currentTrademark.id ?? -1;
+            Param.tmName = currentTrademark.tmName;
+            Param.logoUrl = currentTrademark.logoUrl ?? '';
+            Param.remark = currentTrademark.remark || '';
+            // 打开对话框
+            dialogFormVisible.value = true;
+        } else {
+            ElMessage.error('未找到要编辑的品牌数据');
+        }
+    } catch (error) {
+        console.error('编辑品牌时出错:', error);
+        ElMessage.error('系统异常，请稍后重试');
     }
-    dialogFormVisible.value = true;
-    const result = await reqUpdateTrademark(data);
 }
 
 const cancel = () => {
     // 关闭对话框
     dialogFormVisible.value = false;
 }
-const confirm = () => {
-    // 提交表单数据
-    // 关闭对话框
-    dialogFormVisible.value = false;
+const confirm = async () => {
+    // 表单验证
+    if (!trademarkFormRef.value) return;
+
+    await trademarkFormRef.value.validate(async (valid, fields) => {
+        if (valid) {
+            // 表单验证通过，执行添加或修改操作
+            dialogFormVisible.value = false;
+
+            if (Param.id == -1) {
+                let data = {
+                    tmName: Param.tmName,
+                    logoUrl: Param.logoUrl,
+                    remark: Param.remark
+                }
+                let result = await reqAddTrademark(data);
+                if (result.code === 200) {
+                    ElMessage.success('添加成功');
+                    getHasTrademark();
+                } else {
+                    ElMessage.error(result.message || '添加失败');
+                }
+            } else {
+                let result = await reqUpdateTrademark(Param);
+                if (result.code === 200) {
+                    ElMessage.success('修改成功');
+                    getHasTrademark();
+                } else {
+                    ElMessage.error(result.message || '修改失败');
+                }
+                Param.id = -1;
+            }
+        } else {
+            console.log('表单验证失败:', fields);
+        }
+    });
+}
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+    const isImage = rawFile.type === 'image/jpeg' || rawFile.type === 'image/png' || rawFile.type === 'image/jpg';
+    const isLt4MB = rawFile.size / 1024 / 1024 < 4;
+
+    if (!isImage) {
+        ElMessage.error('上传头像图片只能是 JPG、PNG 格式!');
+        return false;
+    }
+    if (!isLt4MB) {
+        ElMessage.error('上传头像图片大小不能超过 4MB!');
+        return false;
+    }
+    return true;
+}
+
+const handleAvatarSuccess: UploadProps['onSuccess'] = (
+    response,
+    uploadFile
+) => {
+    console.log('上传响应:', response);
+    if (response.code === 200) {
+        // 存储相对路径，不包含域名前缀
+        let imgUrl = response.data.imgUrl;
+
+        // 如果返回的URL包含域名前缀，需要移除
+        if (imgUrl.startsWith('http://localhost:9006/')) {
+            imgUrl = imgUrl.substring('http://localhost:9006/'.length);
+        }
+
+        Param.logoUrl = imgUrl;
+        console.log('设置的图片路径:', Param.logoUrl);
+    } else {
+        ElMessage.error('上传失败: ' + (response.message || '未知错误'));
+    }
+}
+
+// 处理图片URL，添加前缀
+const handleImageUrl = (url: string): string => {
+    if (!url) return '';
+
+    // 如果已经是完整的URL（以http或https开头），则直接返回
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+    }
+
+    // 去除可能存在的前导斜杠
+    const cleanUrl = url.replace(/^\/+/, '');
+
+    // 添加前缀
+    return `http://localhost:9006/${cleanUrl}`;
+}
+
+// 处理图片加载错误
+const handleImageError = (e: Event) => {
+    console.error('图片加载失败:', (e.target as HTMLImageElement).src);
+    // 可以设置一个默认图片
+    // (e.target as HTMLImageElement).src = '/default-image.png';
 }
 </script>
 

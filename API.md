@@ -189,3 +189,22 @@
     "data": {}
 }
 ```
+
+## 3. 文件上传
+
+- **URL**:`/comm/file/upload`
+- **请求方式**:`POST`
+- **请求参数**:
+  - `form-data`：file-value
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "imgUrl": "/static/images/4a6c220e654d4846803c4bbbb978b459.jpg"
+    }
+}
+```
