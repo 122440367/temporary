@@ -16,7 +16,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="300px">
-                    <template #default="{ row }">   
+                    <template #default="{ row }">
                         <el-button type="primary" size="large" icon="Edit">编辑</el-button>
                         <el-button type="danger" size="large" icon="Delete">删除</el-button>
                     </template>
@@ -25,16 +25,9 @@
         </el-card>
 
         <!-- 分页器 -->
-        <el-pagination 
-            v-model:current-page="pageNo" 
-            v-model:page-size="pageSize" 
-            :page-sizes="[8,10]"
-            :background="true" 
-            layout=" prev, pager, next, jumper,->, sizes,total" 
-            :total="total" 
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-        />
+        <el-pagination v-model:current-page="pageNo" v-model:page-size="pageSize" :page-sizes="[8, 10]"
+            :background="true" layout=" prev, pager, next, jumper,->, sizes,total" :total="total"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
 </template>
 
@@ -42,19 +35,20 @@
 import { ref, onMounted, reactive } from 'vue'
 import { reqHasTrademark } from '@/api/product/trademark';
 import { ElMessage } from 'element-plus';
+import type { Records, trademarkResponseData, reqTrademarkData } from '@/api/product/trademark/type';
 
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(8);
 let total = ref<number>(0);
 let loading = ref<boolean>(false);
 
-let reqData = reactive({
+let reqData = reactive<reqTrademarkData>({
     page: pageNo.value,
     size: pageSize.value,
     tmName: ''
 });
 
-let trademarkArr = ref<any>([]);
+let trademarkArr = ref<Records>([]);
 
 // 将获取品牌的接口封装为函数
 const getHasTrademark = async () => {
@@ -63,12 +57,12 @@ const getHasTrademark = async () => {
         reqData.page = pageNo.value;
         reqData.size = pageSize.value;
 
-        const result = await reqHasTrademark(reqData);
+        const result: trademarkResponseData = await reqHasTrademark(reqData);
         console.log(result);
-        if(result.code === 200) {
+        if (result.code === 200) {
             // 请求成功，处理数据
             total.value = result.data.total;
-            trademarkArr.value = result.data.records;        
+            trademarkArr.value = result.data.records;
         } else {
             // 请求失败，处理错误
             console.error('获取品牌失败:', result.message);
