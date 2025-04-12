@@ -1,9 +1,27 @@
 <template>
-    <div>
+    <div class="root">
+        <div>
         <el-card class="box-card">
-            <!-- 控制按钮 -->
-            <el-button type="primary" size="large" style="margin-bottom: 10px;" @click="addTradeMark">添加品牌</el-button>
-
+            <!-- 顶部操作栏 -->
+            <div class="operation-bar">
+                <!-- 左侧按钮 -->
+                <div class="left-operation">
+                    <el-button type="primary" size="large" @click="addTradeMark">添加品牌</el-button>
+                </div>
+                
+                <!-- 右侧搜索区域 -->
+                <div class="right-search">
+                    <el-input 
+                        v-model="reqData.tmName" 
+                        placeholder="请输入品牌名称"
+                        style="width: 300px; margin-right: 10px;"
+                        clearable
+                        @clear="getHasTrademark"
+                    ></el-input>
+                    <el-button type="primary" size="large" @click="getHasTrademark">搜索</el-button>
+                </div>
+            </div>
+            
             <!-- 展示表格 -->
             <el-table :border="true" :data="trademarkArr" v-loading="loading">
                 <el-table-column label="序号" width="120px" align="center" type="index">
@@ -64,10 +82,13 @@
             </div>
         </template>
     </el-dialog>
+
+    </div>
+    
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, watch } from 'vue'; // 引入 watch
 import { reqHasTrademark, reqdeleteTrademark, reqUpdateTrademark, reqAddTrademark } from '@/api/product/trademark';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { Records, trademarkResponseData, reqTrademarkData } from '@/api/product/trademark/type';
@@ -313,6 +334,16 @@ const handleImageError = (e: Event) => {
     // 可以设置一个默认图片
     // (e.target as HTMLImageElement).src = '/default-image.png';
 }
+
+// 添加 watch 监听搜索内容变化
+watch(() => reqData.tmName, (newValue, oldValue) => {
+    // 当搜索内容被清空时，自动执行搜索
+    if (newValue === '' && oldValue !== '') {
+        // 重置到第一页
+        pageNo.value = 1;
+        getHasTrademark();
+    }
+});
 </script>
 
 
@@ -321,6 +352,23 @@ const handleImageError = (e: Event) => {
     width: 178px;
     height: 178px;
     display: block;
+}
+
+/* 添加新的样式 */
+.operation-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.left-operation {
+    /* 左侧按钮区域样式 */
+}
+
+.right-search {
+    display: flex;
+    align-items: center;
 }
 </style>
 
