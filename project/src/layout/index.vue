@@ -34,12 +34,17 @@ import Main from './main/index.vue';
 import useLayOutSettingStore from '@/stores/modules/setting'
 // import { useRoute } from 'vue-router';
 import Tabbar from './tabbar/index.vue';
+import { watch } from 'vue';
 
 let userStore = useUserStore();
 
 let LayOutSettingStore = useLayOutSettingStore()
 
-
+watch(() => LayOutSettingStore.refresh, () => {
+    //刷新页面
+    window.location.reload()
+    LayOutSettingStore.refresh = false
+})
 </script>
 
 <script lang="ts">
@@ -69,7 +74,7 @@ export default {
         .scrollbar {
             height: calc(100vh - $base-tabbar-height - 50px);
             width: 100%;
-            
+
         }
     }
 
@@ -106,7 +111,5 @@ export default {
 
 }
 
-.layout_main {
-    
-}
+// .layout_main {}
 </style>
