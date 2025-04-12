@@ -91,159 +91,101 @@
 
 ---
 
-## 2. 角色管理接口
+## 2. 商品管理接口
 
-### 2.1 获取角色列表
+### 2.1  获取品牌分页列表
 
-- **URL**: `/sys/acl/role/getRoleList`
-- **请求方式**: `GET`
-- **返回数据**:
-
-  ```json
-  {
+- **URL**:`product/brand/getpage`
+- **请求方式**：`POST/GET`
+- **请求参数**：
+  - `page`:
+  - `size`: 
+  - `tmName`：品牌名称(可选 用于搜索)
+- **返回数据**：
+  
+``` json
+{
+    "success": true,
     "code": 200,
-    "message": "操作成功",
-    "data": [ /* 角色列表 */ ]
-  }
-  ```
-
-### 2.2 分页获取角色
-
-- **URL**: `/sys/acl/role/getpage/{page}/{size}`
-- **请求方式**: `GET`
-- **请求参数**:
-  - `page` (String): 页码
-  - `size` (String): 每页大小
-  - `roleNm` (String, 可选): 角色名称
-- **返回数据**:
-
-  ```json
-  {
-    "code": 200,
-    "message": "操作成功",
+    "message": "成功",
     "data": {
-      "records": [ /* 角色数据 */ ],
-      "total": 100,
-      "pages": 10,
-      "size": 10
+        "total": 2,
+        "pages": 1,
+        "size": 2,
+        "records": [
+            {
+                "id": 1,
+                "tmName": "KFC肯德基",
+                "logoUrl": "https://tse1-mm.cn.bing.net/th/id/OIP-C.anWuAPUpP4F_TGXX9yTTcwHaEA?w=319&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                "createTime": "2025-04-12T07:33:18.000+00:00",
+                "updateTime": "2025-04-12T07:33:18.000+00:00",
+                "remark": "KFC Crazy Thursday VM 50"
+            },
+            {
+                "id": 2,
+                "tmName": "KFC肯德基",
+                "logoUrl": "https://tse1-mm.cn.bing.net/th/id/OIP-C.anWuAPUpP4F_TGXX9yTTcwHaEA?w=319&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                "createTime": "2025-04-12T07:33:36.000+00:00",
+                "updateTime": "2025-04-12T07:33:36.000+00:00",
+                "remark": "肯德基疯狂星期四 v我五十"
+            }
+        ]
     }
-  }
-  ```
+}
+```
 
-### 2.3 添加角色
+### 2.2 添加品牌
 
-- **URL**: `/sys/acl/role/add`
-- **请求方式**: `POST`
+- **URL**:`/product/brand/add`
+- **请求方式**:`POST`
 - **请求参数**:
-  - `SysRoleDto` (JSON): 角色信息
-- **返回数据**:
+  - `tmName`： 品牌名称(必选)
+  - `logoUrl`：品牌LOGO(可选)
+  - `remark`： 备注(可选)
+- **返回数据**：
 
-  ```json
-  {
+``` json
+{
+    "success": true,
     "code": 200,
-    "message": "添加成功"
-  }
-  ```
+    "message": "添加成功！",
+    "data": {}
+}
+```
 
----
+### 2.3 更新品牌
 
-## 3. 分类管理接口
-
-### 3.1 获取一级分类
-
-- **URL**: `/product/category/getOne`
-- **请求方式**: `GET`
-- **返回数据**:
-
-  ```json
-  {
-    "code": 200,
-    "message": "操作成功",
-    "data": {
-      "categorys": [ /* 一级分类列表 */ ]
-    }
-  }
-  ```
-
-### 3.2 添加一级分类
-
-- **URL**: `/product/category/addCategory1`
-- **请求方式**: `POST`
+- **URL**:`/product/brand/upd`
+- **请求方式**:`PUT`
 - **请求参数**:
-  - `ProductCategoryInf` (JSON): 分类信息
-- **返回数据**:
+  - `id`:品牌id(必选)
+  - `tmName`： 品牌名称(？)
+  - `logoUrl`：品牌LOGO(可选)
+  - `remark`： 备注(可选)
+- **返回数据**：
 
-  ```json
-  {
+```json
+{
+    "success": true,
     "code": 200,
-    "message": "添加成功"
-  }
-  ```
+    "message": "修改成功！",
+    "data": {}
+}
+```
 
----
+### 2.3 删除品牌
 
-## 4. 文件上传接口
-
-### 4.1 文件上传
-
-- **URL**: `/comm/file/upload`
-- **请求方式**: `POST`
+- **URL**:`/product/brand/delete/{id}`
+- **请求方式**:`DELETE`
 - **请求参数**:
-  - `file` (MultipartFile): 文件
-- **返回数据**:
+  - `id`:品牌id(必选)
+- **返回数据**：
 
-  ```json
-  {
+```json
+{
+    "success": true,
     "code": 200,
-    "message": "上传成功",
-    "data": {
-      "filePath": "/static/images/..."
-    }
-  }
-  ```
-
----
-
-## 5. 产品管理接口
-
-### 5.1 获取SPU分页
-
-- **URL**: `/product/spu/getpage/{page}/{size}`
-- **请求方式**: `GET`
-- **请求参数**:
-  - `page` (String): 页码
-  - `size` (String): 每页大小
-  - `categoryId` (String, 可选): 分类ID
-- **返回数据**:
-
-  ```json
-  {
-    "code": 200,
-    "message": "操作成功",
-    "data": {
-      "records": [ /* SPU数据 */ ],
-      "total": 100,
-      "pages": 10,
-      "size": 10
-    }
-  }
-  ```
-
-### 5.2 添加SPU
-
-- **URL**: `/product/spu/add`
-- **请求方式**: `POST`
-- **请求参数**:
-  - `ProductSpuDto` (JSON): SPU信息
-- **返回数据**:
-
-  ```json
-  {
-    "code": 200,
-    "message": "添加成功"
-  }
-  ```
-
----
-
-如果需要更详细的接口文档，请提供更多代码或具体需求信息。
+    "message": "删除成功！",
+    "data": {}
+}
+```

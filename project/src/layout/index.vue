@@ -27,8 +27,6 @@
 
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { GET_TOKEN } from '@/utils/token';
 import Logo from './logo/index.vue';
 import Menu from './menu/index.vue';
 import useUserStore from '@/stores/modules/user';
@@ -37,21 +35,11 @@ import useLayOutSettingStore from '@/stores/modules/setting'
 // import { useRoute } from 'vue-router';
 import Tabbar from './tabbar/index.vue';
 
-let $router = useRouter();
-// let $route = useRoute();
 let userStore = useUserStore();
 
 let LayOutSettingStore = useLayOutSettingStore()
 
-const redirect = () => {
-    const token = GET_TOKEN();
-    if (!token) {
-        $router.push('/login');
-    }
-};
 
-// 调用函数
-redirect();
 </script>
 
 <script lang="ts">
@@ -119,6 +107,6 @@ export default {
 }
 
 .layout_main {
-    background-color: blueviolet;
+    
 }
 </style>

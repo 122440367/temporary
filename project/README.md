@@ -146,3 +146,7 @@
             next({ path: '/login', query: { redirect: to.path } }); // 跳转到登录页面
         }
     }
+
+### third
+
+在处理品牌管理的请求时不管怎么调整参数都报错 `Request Param Wrong` ，最后发现请求方法定义的不对，虽然postman测试发现post和get均可行，但是这里只能用post，似乎是因为axios的get方法没法带参数过去
