@@ -42,3 +42,6 @@ export interface CategoryResponseData extends ResponseData {
         categorys: CategoryObj[];
     };
 }
+export interface AddOrUpdateAttrResponseData extends ResponseData {
+    data:{}
+}

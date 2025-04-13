@@ -5,7 +5,7 @@
 
                 <el-form-item label="一级分类">
                     <el-select placeholder="请选择" style="width: 150px;" v-model="categoryStore.state.c1Id"
-                        @change="getC2" :loading="loading">
+                        @change="getC2" :loading="loading" :disabled="disabled">
                         <el-option v-for="(c1, index) in categoryStore.state.c1Arr" :key="c1.id" :label="c1.caNm"
                             :value="c1.id">
                         </el-option>
@@ -14,23 +14,21 @@
 
                 <el-form-item label="二级分类">
                     <el-select placeholder="请选择" style="width: 150px;" v-model="categoryStore.state.c2Id"
-                        @change="getC3" :loading="loading">
+                        @change="getC3" :loading="loading" :disabled="disabled">
                         <el-option v-if="categoryStore.state.c2Arr.length > 0"
                             v-for="(c2, index) in categoryStore.state.c2Arr" :key="c2.id" :label="c2.caNm"
                             :value="c2.id">
                         </el-option>
-
                     </el-select>
                 </el-form-item>
 
                 <el-form-item label="三级分类">
                     <el-select placeholder="请选择" style="width: 150px;" v-model="categoryStore.state.c3Id"
-                        :loading="loading">
+                        :loading="loading" :disabled="disabled">
                         <el-option v-if="categoryStore.state.c3Arr.length > 0"
                             v-for="(c3, index) in categoryStore.state.c3Arr" :key="c3.id" :label="c3.caNm"
                             :value="c3.id">
                         </el-option>
-
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -41,6 +39,14 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import useCategoryStore from '@/stores/modules/category';
+
+// 接收父组件传递的 disabled 属性
+defineProps({
+    disabled: {
+        type: Boolean,
+        default: false
+    }
+});
 
 let categoryStore = useCategoryStore();
 const loading = ref(false);
