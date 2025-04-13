@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import { reqC1, reqC2, reqC3 } from "@/api/product/attr";
+import { reqAttr, reqC1, reqC2, reqC3 } from "@/api/product/attr";
 import { ref } from "vue";
-import type { CategoryResponseData } from "@/api/product/attr/type";
+import type { AttrResponseData, CategoryResponseData } from "@/api/product/attr/type";
 import type { CategoryState } from "./types/type";
 
 let useCategoryStore = defineStore("category", () => {
@@ -13,7 +13,8 @@ let useCategoryStore = defineStore("category", () => {
             c2Id: '',
             c2Arr: [], // 二级分类数据
             c3Id: '',
-            c3Arr: []
+            c3Arr: [],
+            Attrs: []
         }
     );
 
@@ -44,11 +45,20 @@ let useCategoryStore = defineStore("category", () => {
         }
     }
 
+    const getAttr = async (C3_id: number) => {
+        let result: AttrResponseData = await reqAttr(C3_id);
+        if (result.code == 200) {
+            state.value.Attrs = result.data.attrs;
+        } else {
+            console.log('获取属性数据失败')
+        }
+    }
     return {
         state,
         getC1,
         getC2,
-        getC3
+        getC3,
+        getAttr
     };
 
 });

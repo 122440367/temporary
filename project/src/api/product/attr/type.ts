@@ -18,6 +18,25 @@ export interface CategoryObj {
     remark: string,
 }
 
+ interface AttrValueList{
+    id: number;
+    attrValue: string;
+}
+
+export interface attrs {
+    id: number;
+    categoryId: number;     //应该时三级分类id
+    attNm: string;             //属性名称
+    attrValueList: AttrValueList[];
+}
+
+export interface AttrResponseData extends ResponseData {
+    data: {
+        attrs: attrs[];
+    };
+}
+
+
 export interface CategoryResponseData extends ResponseData {
     data: {
         categorys: CategoryObj[];

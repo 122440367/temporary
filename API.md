@@ -391,7 +391,7 @@
 }
 ```
 
-### 4.1 获取三级分类
+### 4.3 获取三级分类
 
 - **URL**:`/product/category/getThree`
 - **请求方式**:`GET`
@@ -430,5 +430,41 @@
             }
         ]
     }
+}
+```
+
+### 4.4 获取属性值
+
+- **URL**:`/product/attr/getlist/{id}`
+- **请求方式**:`GET`
+- **请求参数**：三级分类id
+- **返回数据**：
+
+```json
+{
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "attrs": [
+            {
+                "id": 1,
+                "categoryId": 1,
+                "attNm": "修改后的属性名称",
+                "attrValueList": [
+                    {
+                        "id": 1,
+                        "attrValue": "修改后的属性值1"
+                    },
+                    {
+                        "id": 2,
+                        "attrValue": "修改后的属性值2"
+                    }
+                ]
+            }
+        ]
+    }
+}
 }
 ```
