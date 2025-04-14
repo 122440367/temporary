@@ -45,7 +45,7 @@
 
                 <el-button type="primary" icon="Plus" @click="addAttrValue" style="margin:10px 0">添加属性值</el-button>
 
-                <div class="bottom">    
+                <div class="bottom">
                     <el-button type="primary" size="default" icon="Plus" @click="AddAttr">保存</el-button>
                     <el-button type="primary" size="default" @click="cancle">取消</el-button>
                 </div>
