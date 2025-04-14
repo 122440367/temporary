@@ -43,10 +43,10 @@
                     </el-form-item>
                 </el-form>
 
-                <el-button type="primary" icon="Plus" @click="addAttrValue" style="margin:10px 0">保存修改</el-button>
+                <el-button type="primary" icon="Plus" @click="addAttrValue" style="margin:10px 0">添加属性值</el-button>
 
-                <div class="bottom">
-                    <el-button type="primary" size="default" icon="Plus" @click="AddAttr">添加</el-button>
+                <div class="bottom">    
+                    <el-button type="primary" size="default" icon="Plus" @click="AddAttr">保存</el-button>
                     <el-button type="primary" size="default" @click="cancle">取消</el-button>
                 </div>
             </div>
@@ -155,8 +155,18 @@ const editAttr = (row: any) => {
 };
 
 const saveAttr = async () => {
+    // 检查属性值是否重复
+    const values = AttrParam.value.attrValueList.map((item) => item.attrValue.trim());
+    const hasDuplicateValues = values.some((value, index) => values.indexOf(value) !== index);
+
+    if (hasDuplicateValues) {
+        ElMessage.error('属性值存在重复，请修改后再保存');
+        return;
+    }
+
     const valid = await attrForm.value.validate().catch(() => false);
     if (!valid) return;
+
     let TempParam = {
         ...AttrParam.value,
         id: categoryStore.state.Attrs.find(attr => attr.attNm === AttrParam.value.attNm)?.id || null
@@ -171,12 +181,23 @@ const saveAttr = async () => {
     } else {
         ElMessage.error(result.message);
     }
+    isCategoryDisabled.value = false; // 恢复下拉菜单
+    scene.value = true;
 };
 
 const AddAttr = async () => {
+    const isDuplicate = categoryStore.state.Attrs.some(
+        (attr) => attr.attNm === AttrParam.value.attNm
+    );
+    if (isDuplicate) {
+        ElMessage.error('属性名称已存在，请勿重复添加');
+        return;
+    }
+
     const valid = await attrForm.value.validate().catch(() => false);
     if (!valid) return;
 
+    AttrParam.value.categoryId = categoryStore.state.c3Id;
     let result = await reqAddAttr(AttrParam.value);
 
     if (result.code === 200) {
@@ -187,6 +208,7 @@ const AddAttr = async () => {
     }
     scene.value = true;
     categoryStore.getAttr(categoryStore.state.c3Id as number);
+    isCategoryDisabled.value = false; // 恢复下拉菜单
 };
 
 const cancle = () => {
