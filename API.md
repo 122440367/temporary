@@ -466,5 +466,170 @@
         ]
     }
 }
+
+```
+
+## 5 ACL
+
+### 5.1 获取用户信息
+
+- **URL**:`/sys/acl/user/getpage/{page}/{size}`
+- **请求方式**:`GET`
+- **请求参数**：userNm（可选 但是没看懂是在干嘛）
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "total": 1,
+        "pages": 1,
+        "hasNext": false,
+        "users": [
+            {
+                "id": 1,
+                "loginId": "admin",
+                "nickName": "管理员账号",
+                "password": "$2a$10$5VUHUT6UJG1zrSWTbMMn5O0Hie3Qh0Q5kZ9wpDRm.VOOFNoYiOFdm",
+                "status": "1",
+                "email": "",
+                "mobile": "18696119916",
+                "sex": "",
+                "avatar": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                "userType": "1",
+                "createBy": "",
+                "createTime": "2025-04-09 11:19:50",
+                "updateBy": "",
+                "roleNms": null,
+                "updateTime": "2025-04-09 11:19:50",
+                "deleted": "1",
+                "sourceType": "1"
+            }
+        ]
+    }
+}
+
+```
+
+### 5.2 添加新用户
+
+- **URL**:`/sys/acl/user/add`
+- **请求方式**:`POST`
+- **请求参数**：
+  - `loginId`(String):用户名
+  - `nickName`(String):用户昵称
+  - `password`(String):密码
+  - `roleList`(String[]):暂时不知道是啥 可选参数
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "添加用户成功！",
+    "data": {}
+}
+
+```
+
+### 5.3 修改用户信息
+
+- **URL**:`/sys/acl/user/upd`
+- **请求方式**:`PUT`
+- **请求参数**：
+  - `id`(number):用户id
+  - `loginId`(String):用户名  可选参数
+  - `nickName`(String):用户昵称 可选参数
+  - `password`(String):密码     可选参数
+  - `roleList`(String[]):暂时不知道是啥 可选参数
+  - 四项至少有其一(大概)
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "修改用户成功！",
+    "data": {}
+}
+
+```
+
+### 5.4 修改/分配角色
+
+- **URL**:`/sys/acl/user/allocationRoles`
+- **请求方式**:`PUT`
+- **请求参数**：
+  - `id`(number):用户id
+  - `roleList`(String[]):暂时不知道是啥 可选参数
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "用户角色分配成功！",
+    "data": {}
+}
+
+```
+
+### 5.5 删除角色
+
+- **URL**:`/sys/acl/user/del/{id}`
+- **请求方式**:`DELETE`
+- **请求参数**：
+  - `id`(number):用户id
+- **返回数据**：
+
+无法删除某些特定角色的用户(如系统账户)，会报出错误的message
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "删除用户成功！",
+    "data": {}
+}
+
+```
+
+### 5.6 批量删除角色
+
+- **URL**:`/sys/acl/user/batchDelete`
+- **请求方式**:`DELETE`
+- **请求参数**：
+  - `userIdList`(String[]):用户id
+- **返回数据**：
+
+和删除方法有同样的限制
+
+```json
+{
+    "success": false,
+    "code": 5019,
+    "message": "以下用户id为系统角色不能删除：【2,3,4】",
+    "data": {}
+}
+```
+
+### 5.7 获取用户角色列表
+
+- **URL**:`/sys/acl/user/getUserRoles/{userId}`
+- **请求方式**:`DELETE`
+- **请求参数**：
+  - `userId`(number):用户id     --Param--
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "roles": []
+    }
 }
 ```
