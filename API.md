@@ -475,7 +475,7 @@
 
 - **URL**:`/sys/acl/user/getpage/{page}/{size}`
 - **请求方式**:`GET`
-- **请求参数**：userNm（可选 但是没看懂是在干嘛）
+- **请求参数**：userNm（可选 做参数传入）
 - **返回数据**：
 
 ```json
