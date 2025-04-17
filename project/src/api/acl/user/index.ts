@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { AllUserResponseData, Response } from "./type";
+import type { AllUserResponseData, Response, User } from "./type";
 
 enum API {
     ALLUSE_URL = '/sys/acl/user/getpage/',
@@ -13,4 +13,4 @@ export const reqAllUserInfo = (page: number, size: number, userNm?: string) => {
 };
 
 
-export const reqAddUser = (data: any) => request.post<any, Response>(API.ADDUSER_URL, data);
+export const reqAddUser = (data: User) => request.post<any, Response>(API.ADDUSER_URL, data);

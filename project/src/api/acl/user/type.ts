@@ -9,6 +9,7 @@ export interface User {
     id?: number;
     loginId: string;
     nickName: string;
+    password?: string;
     email: string;
     mobile?: string
     sex?: string
