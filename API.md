@@ -618,9 +618,9 @@
 ### 5.7 获取用户角色列表
 
 - **URL**:`/sys/acl/user/getUserRoles/{userId}`
-- **请求方式**:`DELETE`
+- **请求方式**:`GET`
 - **请求参数**：
-  - `userId`(number):用户id     --Param--
+  - `userId`(number):用户id
 - **返回数据**：
 
 ```json
@@ -630,6 +630,57 @@
     "message": "成功",
     "data": {
         "roles": []
+    }
+}
+```
+
+### 5.8 获取角色列表
+
+- **URL**:`/sys/acl/role/getRoleList`
+- **请求方式**:`GET`
+- **请求参数**：
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "roles": [
+            {
+                "roleId": 1,
+                "roleName": "系统管理员"
+            },
+            {
+                "roleId": 2,
+                "roleName": "前端开发"
+            },
+            {
+                "roleId": 3,
+                "roleName": "后端开发"
+            },
+            {
+                "roleId": 4,
+                "roleName": "运维"
+            },
+            {
+                "roleId": 5,
+                "roleName": "产品经理"
+            },
+            {
+                "roleId": 6,
+                "roleName": "算法工程师"
+            },
+            {
+                "roleId": 7,
+                "roleName": "财务"
+            },
+            {
+                "roleId": 8,
+                "roleName": "前台"
+            }
+        ]
     }
 }
 ```

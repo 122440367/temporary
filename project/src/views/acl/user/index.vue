@@ -30,7 +30,8 @@
                 <el-table-column label="更新时间" align="center" prop="updateTime"></el-table-column>
                 <el-table-column label="操作" width="500px" align="center">
                     <template #="{ row, $index }">
-                        <el-button type="primary" size="large" :icon="UserIcon">分配角色</el-button>
+                        <el-button type="primary" size="large" :icon="UserIcon"
+                            @click="AssignRole(row)">分配角色</el-button>
                         <el-button type="primary" size="large" icon="Edit" @click="UpdateUser(row)">编辑修改</el-button>
                         <el-button type="danger" size="large" icon="Delete" @click="DeleteUser(row.id)">删除</el-button>
                     </template>
@@ -48,16 +49,16 @@
                 <h3>添加用户</h3>
             </template>
 
-            <el-form :model="UserInfo" :rules="rules" ref="userForm" label-width="100px">
-                <el-form-item label="账号" prop="loginId" required>
+            <el-form :model="UserInfo" :rules="rules" ref="userForm" label-width="100px" v-bind="userForm">
+                <el-form-item label="账号" prop="loginId">
                     <el-input v-model="UserInfo.loginId" placeholder="请输入账号"></el-input>
                 </el-form-item>
 
-                <el-form-item label="昵称" prop="nickName" required>
+                <el-form-item label="昵称" prop="nickName">
                     <el-input v-model="UserInfo.nickName" placeholder="请输入昵称"></el-input>
                 </el-form-item>
 
-                <el-form-item label="密码" prop="password" required>
+                <el-form-item label="密码" prop="password">
                     <el-input v-model="UserInfo.password" type="password" placeholder="请输入密码" show-password></el-input>
                 </el-form-item>
 
@@ -82,6 +83,36 @@
                 </el-form-item>
             </el-form>
         </el-drawer>
+
+
+        <!-- 分配角色的抽屉 -->
+        <el-drawer v-model="roleDrawer">
+            <template #header>
+                <h3>分配角色</h3>
+            </template>
+
+            <template #default>
+                <el-form size="large">
+                    <el-form-item label="角色名称">
+                        <el-input v-model="tempName" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item label="角色列表">
+                        <!-- 全选复选框 -->
+                        <el-checkbox v-model="isAllSelected" @change="toggleSelectAll">全选</el-checkbox>
+                        <el-checkbox-group v-model="AssignRoleParam.roleList" @change="updateSelectAllState">
+                            <template v-for="(item, index) in AllRolesList" :key="index">
+                                <el-checkbox :value="String(item.roleId)">{{ item.roleName }}</el-checkbox>
+                            </template>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+            </template>
+
+            <template #footer>
+                <el-button type="success" size="large" @click="confirmAssign">确认</el-button>
+                <el-button type="danger" size="large" @click="cancleAssign">取消</el-button>
+            </template>
+        </el-drawer>
     </div>
 
 
@@ -90,8 +121,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
-import { reqAddUser, reqAllUserInfo, reqBatchDeleteUser, reqDeleteUser, reqUpdateUser } from '@/api/acl/user';
-import type { User } from '@/api/acl/user/type';
+import { reqAddUser, reqAllUserInfo, reqAssignRole, reqBatchDeleteUser, reqDeleteUser, reqGetRoleList, reqGetUserRole, reqUpdateUser } from '@/api/acl/user';
+import type { Role, User } from '@/api/acl/user/type';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { User as UserIcon } from '@element-plus/icons-vue';
 
@@ -100,6 +131,7 @@ let pageSize = ref<number>(8);
 let total = ref<number>(0);
 let UserArray = ref<User[]>([]);
 let drawer = ref<boolean>(false);
+let roleDrawer = ref<boolean>(false);
 let UserInfo = ref<User>({
     id: -1,
     loginId: '',
@@ -112,11 +144,20 @@ let UserInfo = ref<User>({
 let deleteList = ref({
     userIdList: [] as string[] // 存储选中用户的 ID 列表（数组形式）
 });
-
+let tempName = ref<string>('');
+let AssignRoleParam = ref({
+    id: -1,
+    roleList: [] as string[] // 存储选中用户的角色 ID 列表（数组形式）
+});
+let isAllSelected = ref<boolean>(false); // 全选状态
+const userForm = ref();
 const rules = reactive({
     loginId: [
         { required: true, message: '请输入账号', trigger: 'blur' },
-        { min: 6, max: 15, message: '账号长度必须在6到15位之间', trigger: 'blur' },
+        { min: 5, max: 15, message: '账号长度必须在5到15位之间', trigger: 'blur' },
+    ],
+    nickName: [
+        { required: true, message: '请输入昵称', trigger: 'blur' },
     ],
     password: [
         { required: true, message: '请输入密码', trigger: 'blur' },
@@ -127,6 +168,8 @@ const rules = reactive({
         { type: 'email', message: '请输入正确的邮箱格式', trigger: ['blur'] },
     ],
 });
+let AllRolesList = ref<Role[]>([]); // 所有角色列表
+
 
 const getHasUser = async () => {
     let result = await reqAllUserInfo(pageNo.value, pageSize.value);
@@ -143,6 +186,12 @@ const handleSelectionChange = (selection: User[]) => {
     // 将选中用户的 ID 转为字符串数组
     deleteList.value.userIdList = selection.map((user) => String(user.id));
 };
+
+const handleRolesSelectionChange = (selection: Role[]) => {
+    // 将选中角色的 ID 转为字符串数组
+    AssignRoleParam.value.roleList = selection.map((role) => String(role.roleId));
+};
+
 
 const batchDelete = async () => {
     if (deleteList.value.userIdList.length === 0) {
@@ -181,12 +230,16 @@ const UpdateUser = (data: User) => {
     UserInfo.value = data;
 }
 
-const confirm = async () => {
 
+const confirm = async () => {
+    const valid = await userForm.value.validate().catch(() => false); // 校验表单
+    if (!valid) {
+        ElMessage.error('请填写完整的用户信息');
+        return;
+    }
     if (UserInfo.value.id == -1) {
         // 添加用户
         let { id, ...data } = UserInfo.value;
-
         let result = await reqAddUser(data);
         if (result.code == 200) {
             ElMessage.success(result.message);
@@ -208,7 +261,6 @@ const confirm = async () => {
             ElMessage.error(result.message);
         }
     }
-
 }
 
 const ClearUserInfo = () => {
@@ -244,6 +296,68 @@ const DeleteUser = async (id: number) => {
     }
 };
 
+const AssignRole = async (data: User) => {
+    tempName.value = data.nickName;
+    AssignRoleParam.value.id = data.id as number;
+
+    // 获取所有角色列表
+    let result = await reqGetRoleList();
+    if (result.code === 200) {
+        AllRolesList.value = result.data.roles;
+    } else {
+        ElMessage.error(result.message);
+    }
+
+    // 获取用户已有的角色
+    let temp = await reqGetUserRole(AssignRoleParam.value.id);
+    if (temp.code === 200) {
+        AssignRoleParam.value.roleList = temp.data.roles.map((role: Role) => String(role.roleId));
+        updateSelectAllState(); // 更新全选状态
+    } else {
+        ElMessage.error(temp.message);
+    }
+
+    roleDrawer.value = true;
+};
+
+const confirmAssign = async () => {
+    if (AssignRoleParam.value.roleList.length === 0) {
+        ElMessage.warning('请至少选择一个角色');
+        return;
+    }
+
+    let result = await reqAssignRole(AssignRoleParam.value);
+    if (result.code === 200) {
+        ElMessage.success(result.message);
+        roleDrawer.value = false;
+        getHasUser(); // 刷新用户列表
+    } else {
+        ElMessage.error(result.message + '，请重新分配角色');
+    }
+};
+
+const cancleAssign = () => {
+    roleDrawer.value = false;
+    AssignRoleParam.value.id = -1; // 清空用户 ID
+    AssignRoleParam.value.roleList = []; // 清空选中项
+    tempName.value = ''; // 清空角色名称
+    isAllSelected.value = false; // 重置全选状态
+};
+
+const toggleSelectAll = () => {
+    if (isAllSelected.value) {
+        AssignRoleParam.value.roleList = AllRolesList.value.map((role) => String(role.roleId));
+    } else {
+        AssignRoleParam.value.roleList = [];
+    }
+};
+
+const updateSelectAllState = () => {
+    isAllSelected.value =
+        AssignRoleParam.value.roleList.length === AllRolesList.value.length &&
+        AllRolesList.value.length > 0;
+};
+
 onMounted(() => {
     getHasUser();
 });
@@ -252,6 +366,6 @@ onMounted(() => {
 
 <style scoped></style>
 
-
+<!-- save -->
 
 <!-- 研究了一下数据库的表和接口，发现获取用户分页所返回的信息是多表联合的，回头完善页面的时候注意 -->
