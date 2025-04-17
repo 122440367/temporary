@@ -17,25 +17,23 @@
         <el-card style="margin:10px 0">
 
             <el-button type="primary" size="large" @click="AddUser">添加用户</el-button>
-            <el-button type="danger" size="large">批量删除</el-button>
+            <el-button type="danger" size="large" @click="batchDelete">批量删除</el-button>
 
-            <el-table style="margin:10px 0" border :data="UserArray">
+            <el-table style="margin:10px 0" border :data="UserArray" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" align="center"></el-table-column>
                 <el-table-column label="#" align="center" width="80px" type="index"></el-table-column>
                 <el-table-column label="userID" align="center" prop="id"></el-table-column>
-                <el-table-column label="用户名" align="center" prop="loginId"></el-table-column>
+                <el-table-column label="用户账号" align="center" prop="loginId"></el-table-column>
                 <el-table-column label="用户昵称" align="center" prop="nickName"></el-table-column>
                 <el-table-column label="用户角色" align="center" prop="roleNms"></el-table-column>
                 <el-table-column label="创建时间" align="center" prop="createTime"></el-table-column>
                 <el-table-column label="更新时间" align="center" prop="updateTime"></el-table-column>
                 <el-table-column label="操作" width="500px" align="center">
-
                     <template #="{ row, $index }">
                         <el-button type="primary" size="large" :icon="UserIcon">分配角色</el-button>
                         <el-button type="primary" size="large" icon="Edit" @click="UpdateUser(row)">编辑修改</el-button>
-                        <el-button type="danger" size="large" icon="Delete">删除</el-button>
+                        <el-button type="danger" size="large" icon="Delete" @click="DeleteUser(row.id)">删除</el-button>
                     </template>
-
                 </el-table-column>
             </el-table>
 
@@ -92,9 +90,9 @@
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
-import { reqAddUser, reqAllUserInfo } from '@/api/acl/user';
+import { reqAddUser, reqAllUserInfo, reqBatchDeleteUser, reqDeleteUser, reqUpdateUser } from '@/api/acl/user';
 import type { User } from '@/api/acl/user/type';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { User as UserIcon } from '@element-plus/icons-vue';
 
 let pageNo = ref<number>(1);
@@ -110,6 +108,9 @@ let UserInfo = ref<User>({
     email: '',
     sex: '',
     mobile: '',
+});
+let deleteList = ref({
+    userIdList: [] as string[] // 存储选中用户的 ID 列表（数组形式）
 });
 
 const rules = reactive({
@@ -136,8 +137,40 @@ const getHasUser = async () => {
     } else {
         ElMessage.error(result.message);
     }
-}
+};
 
+const handleSelectionChange = (selection: User[]) => {
+    // 将选中用户的 ID 转为字符串数组
+    deleteList.value.userIdList = selection.map((user) => String(user.id));
+};
+
+const batchDelete = async () => {
+    if (deleteList.value.userIdList.length === 0) {
+        ElMessage.warning('请先选择要删除的用户');
+        return;
+    }
+
+    try {
+        await ElMessageBox.confirm(`确定要删除这${deleteList.value.userIdList.length}名用户吗？`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        });
+
+        console.log(deleteList.value);
+
+        let result = await reqBatchDeleteUser(deleteList.value);
+        if (result.code == 200) {
+            ElMessage.success(result.message);
+            getHasUser(); // 刷新用户列表
+            deleteList.value.userIdList = []; // 清空选中项
+        } else {
+            ElMessage.error(result.message);
+        }
+    } catch (error) {
+
+    }
+};
 
 const AddUser = () => {
     drawer.value = true;
@@ -159,15 +192,57 @@ const confirm = async () => {
             ElMessage.success(result.message);
             getHasUser();
             drawer.value = false;
+            ClearUserInfo();
         } else {
             ElMessage.error(result.message);
         }
     } else {
         // 修改用户
-        
+        let result = await reqUpdateUser(UserInfo.value);
+        if (result.code == 200) {
+            ElMessage.success(result.message);
+            getHasUser();
+            drawer.value = false;
+            ClearUserInfo();
+        } else {
+            ElMessage.error(result.message);
+        }
     }
 
 }
+
+const ClearUserInfo = () => {
+    UserInfo.value = {
+        id: -1,
+        loginId: '',
+        nickName: '',
+        password: '',
+        email: '',
+        sex: '',
+        mobile: '',
+    }
+}
+
+const DeleteUser = async (id: number) => {
+    try {
+        await ElMessageBox.confirm('确定要删除该用户吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        });
+
+        // 调用删除接口
+        let result = await reqDeleteUser(id);
+        if (result.code == 200) {
+            ElMessage.success('删除成功');
+            getHasUser(); // 刷新用户列表
+        } else {
+            ElMessage.error(result.message);
+        }
+    } catch (error) {
+        ElMessage.info('取消删除');
+    }
+};
 
 onMounted(() => {
     getHasUser();

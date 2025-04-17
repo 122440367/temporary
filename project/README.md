@@ -24,6 +24,7 @@
 22. 分类组件的业务搭建 (三级分类看懂了 但是这个attr是什么东西？)
 23. 属性管理所有的业务和数据类型均已经完成 完全脱离了教学视频
 24. 用户管理模块数据获取和展示
+25. 完成了用户管理模块除了角色分配以外所有业务(角色分配的后端结构还没看明白 只有一个初步的大概印象)
 
 ## 学习过程中发现的比较重要的知识点
 
@@ -162,3 +163,12 @@ trademark品牌管理页面，品牌LOGO的显示，涉及了上传图片 el-upl
 ### third
 
 在处理品牌管理的请求时不管怎么调整参数都报错 `Request Param Wrong` ，最后发现请求方法定义的不对，虽然postman测试发现post和get均可行，但是这里只能用post，似乎是因为axios的get方法没法带参数过去
+
+### forth
+
+处理用户管理的批量删除的内容时一直报Request Param Wrong,问Ai得知axios的delete方法不支持直接传递请求体数据。需要通过 data 属性传递请求体。
+
+``` TS
+export const reqBatchDeleteUser = (data: any) =>
+    request.delete<any, Response>(API.BATCHDELETE, { data });
+```
