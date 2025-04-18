@@ -469,7 +469,7 @@
 
 ```
 
-## 5 ACL
+## 5 ACL 用户管理
 
 ### 5.1 获取用户信息
 
@@ -682,5 +682,172 @@
             }
         ]
     }
+}
+```
+
+## 6 角色管理
+
+### 6.1 分页获取角色列表
+
+- **URL**:`/sys/acl/role/getpage/{page}/{size}`
+- **请求方式**:`GET`
+- **请求参数**：
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "total": 9,
+        "pages": 2,
+        "roles": [
+            {
+                "id": 1,
+                "rName": "系统管理员",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-16 16:52:52",
+                "updateBy": "",
+                "updateTime": "2025-04-16 16:52:52",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 2,
+                "rName": "前端开发",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 3,
+                "rName": "后端开发",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 4,
+                "rName": "运维",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 5,
+                "rName": "产品经理",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 6,
+                "rName": "算法工程师",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 7,
+                "rName": "财务",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            },
+            {
+                "id": 8,
+                "rName": "前台",
+                "roleKey": "",
+                "status": "0",
+                "createBy": "",
+                "createTime": "2025-04-17 15:52:16",
+                "updateBy": "",
+                "updateTime": "2025-04-17 15:52:16",
+                "remark": "",
+                "delFlag": "0",
+                "rowSt": "1"
+            }
+        ],
+        "hasNext": true
+    }
+}
+```
+
+### 6.2 添加角色
+
+- **URL**:`/sys/acl/role/add`
+- **请求方式**:`POST`
+- **请求参数**：
+
+```json
+{
+    "rName":"String"        //必填 其他的还没搞明白
+}
+```
+
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "新增角色成功！",
+    "data": {}
+}
+```
+
+### 6.3 删除角色
+
+- **URL**:`/sys/acl/role/del/{roleId}`
+- **请求方式**:`DELETE`
+- **请求参数**：
+- **返回数据**：
+
+```json
+{
+    "success": false,
+    "code": 5019,
+    "message": "系统角色不允许删除！",
+    "data": {}
 }
 ```
