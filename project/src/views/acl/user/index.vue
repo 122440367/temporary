@@ -4,12 +4,12 @@
             <el-form :inline="true" class="form">
 
                 <el-form-item label="用户名:" style="width: 55%;">
-                    <el-input placeholder="请输入用户名" size="default"></el-input>
+                    <el-input placeholder="请输入用户名" size="default" v-model="SearchParam.userNm"></el-input>
                 </el-form-item>
 
                 <el-form-item>
-                    <el-button type="primary" size="large">搜索</el-button>
-                    <el-button type="primary" size="large">重置</el-button>
+                    <el-button type="primary" size="large" @click="Search">搜索</el-button>
+                    <el-button type="primary" size="large" @click="Reset">重置</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -46,7 +46,7 @@
         <!-- 添加新用户以及修改用户的的抽屉 -->
         <el-drawer v-model="drawer">
             <template #header>
-                <h3>添加用户</h3>
+                <h3>{{ drawerTitle }}</h3>
             </template>
 
             <el-form :model="UserInfo" :rules="rules" ref="userForm" label-width="100px" v-bind="userForm">
@@ -169,6 +169,10 @@ const rules = reactive({
     ],
 });
 let AllRolesList = ref<Role[]>([]); // 所有角色列表
+let SearchParam = ref({
+    userNm: ''
+})
+let drawerTitle = ref<string>('添加用户'); // 抽屉标题
 
 
 const getHasUser = async () => {
@@ -187,10 +191,6 @@ const handleSelectionChange = (selection: User[]) => {
     deleteList.value.userIdList = selection.map((user) => String(user.id));
 };
 
-const handleRolesSelectionChange = (selection: Role[]) => {
-    // 将选中角色的 ID 转为字符串数组
-    AssignRoleParam.value.roleList = selection.map((role) => String(role.roleId));
-};
 
 
 const batchDelete = async () => {
@@ -222,12 +222,15 @@ const batchDelete = async () => {
 };
 
 const AddUser = () => {
+    drawerTitle.value = '添加用户';
     drawer.value = true;
 }
 
 const UpdateUser = (data: User) => {
+    drawerTitle.value = '修改用户';
     drawer.value = true;
     UserInfo.value = data;
+    UserInfo.value.password = '******'; // 清空密码
 }
 
 
@@ -251,6 +254,10 @@ const confirm = async () => {
         }
     } else {
         // 修改用户
+        if (UserInfo.value.password == '******') {
+            UserInfo.value.password = undefined; // 清空密码
+        }
+
         let result = await reqUpdateUser(UserInfo.value);
         if (result.code == 200) {
             ElMessage.success(result.message);
@@ -358,6 +365,21 @@ const updateSelectAllState = () => {
         AllRolesList.value.length > 0;
 };
 
+const Search = async () => {
+    let result = await reqAllUserInfo(pageNo.value, pageSize.value, SearchParam.value.userNm);
+    if (result.code == 200) {
+        UserArray.value = result.data.users;
+        total.value = result.data.total;
+    } else {
+        ElMessage.error(result.message);
+    }
+};
+
+const Reset = () => {
+    SearchParam.value.userNm = '';
+    getHasUser();
+};
+
 onMounted(() => {
     getHasUser();
 });
@@ -365,7 +387,3 @@ onMounted(() => {
 </script>
 
 <style scoped></style>
-
-<!-- save -->
-
-<!-- 研究了一下数据库的表和接口，发现获取用户分页所返回的信息是多表联合的，回头完善页面的时候注意 -->
