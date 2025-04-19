@@ -692,6 +692,7 @@
 - **URL**:`/sys/acl/role/getpage/{page}/{size}`
 - **请求方式**:`GET`
 - **请求参数**：
+  - `roleNm：String`
 - **返回数据**：
 
 ```json
@@ -849,5 +850,438 @@
     "code": 5019,
     "message": "系统角色不允许删除！",
     "data": {}
+}
+```
+
+### 6.4 获取角色权限菜单
+
+- **URL**:`/sys/acl/role/getRoleMenus/{roleId}`
+- **请求方式**:`GET`
+- **请求参数**：
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "menus": []
+    }
+}
+```
+
+### 6.4 获取全部权限菜单
+
+- **URL**:`/sys/acl/role/getAllMenus`
+- **请求方式**:`GET`
+- **请求参数**：
+- **返回数据**：
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": "成功",
+    "data": {
+        "menus": [
+            {
+                "menuId": 1,
+                "parentMenuId": 0,
+                "menuName": "首页",
+                "level": 0,
+                "menuType": "1",
+                "path": "",
+                "component": "",
+                "compName": "",
+                "status": "0",
+                "perms": "",
+                "icon": "",
+                "meta": "",
+                "childrenList": []
+            },
+            {
+                "menuId": 2,
+                "parentMenuId": 0,
+                "menuName": "数据大屏",
+                "level": 0,
+                "menuType": "1",
+                "path": "",
+                "component": "",
+                "compName": "",
+                "status": "0",
+                "perms": "",
+                "icon": "",
+                "meta": "",
+                "childrenList": []
+            },
+            {
+                "menuId": 3,
+                "parentMenuId": 0,
+                "menuName": "权限管理",
+                "level": 0,
+                "menuType": "1",
+                "path": "",
+                "component": "",
+                "compName": "",
+                "status": "0",
+                "perms": "",
+                "icon": "",
+                "meta": "",
+                "childrenList": [
+                    {
+                        "menuId": 5,
+                        "parentMenuId": 3,
+                        "menuName": "用户管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": [
+                            {
+                                "menuId": 12,
+                                "parentMenuId": 5,
+                                "menuName": "添加用户",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 13,
+                                "parentMenuId": 5,
+                                "menuName": "批量删除",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 14,
+                                "parentMenuId": 5,
+                                "menuName": "分配角色",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 15,
+                                "parentMenuId": 5,
+                                "menuName": "编辑修改",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 16,
+                                "parentMenuId": 5,
+                                "menuName": "删除",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            }
+                        ]
+                    },
+                    {
+                        "menuId": 6,
+                        "parentMenuId": 3,
+                        "menuName": "角色管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": [
+                            {
+                                "menuId": 17,
+                                "parentMenuId": 6,
+                                "menuName": "添加角色",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 18,
+                                "parentMenuId": 6,
+                                "menuName": "分配权限",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 19,
+                                "parentMenuId": 6,
+                                "menuName": "编辑",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 20,
+                                "parentMenuId": 6,
+                                "menuName": "删除",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            }
+                        ]
+                    },
+                    {
+                        "menuId": 7,
+                        "parentMenuId": 3,
+                        "menuName": "权限管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": []
+                    }
+                ]
+            },
+            {
+                "menuId": 4,
+                "parentMenuId": 0,
+                "menuName": "商品管理",
+                "level": 0,
+                "menuType": "1",
+                "path": "",
+                "component": "",
+                "compName": "",
+                "status": "0",
+                "perms": "",
+                "icon": "",
+                "meta": "",
+                "childrenList": [
+                    {
+                        "menuId": 8,
+                        "parentMenuId": 4,
+                        "menuName": "品牌管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": [
+                            {
+                                "menuId": 21,
+                                "parentMenuId": 8,
+                                "menuName": "添加品牌",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 22,
+                                "parentMenuId": 8,
+                                "menuName": "编辑",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 23,
+                                "parentMenuId": 8,
+                                "menuName": "删除",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            }
+                        ]
+                    },
+                    {
+                        "menuId": 9,
+                        "parentMenuId": 4,
+                        "menuName": "属性管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": [
+                            {
+                                "menuId": 24,
+                                "parentMenuId": 9,
+                                "menuName": "添加属性",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 25,
+                                "parentMenuId": 9,
+                                "menuName": "编辑",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            },
+                            {
+                                "menuId": 26,
+                                "parentMenuId": 9,
+                                "menuName": "删除",
+                                "level": 2,
+                                "menuType": "3",
+                                "path": "",
+                                "component": "",
+                                "compName": "",
+                                "status": "0",
+                                "perms": "",
+                                "icon": "",
+                                "meta": "",
+                                "childrenList": []
+                            }
+                        ]
+                    },
+                    {
+                        "menuId": 10,
+                        "parentMenuId": 4,
+                        "menuName": "SPU管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": []
+                    },
+                    {
+                        "menuId": 11,
+                        "parentMenuId": 4,
+                        "menuName": "SKU管理",
+                        "level": 1,
+                        "menuType": "2",
+                        "path": "",
+                        "component": "",
+                        "compName": "",
+                        "status": "0",
+                        "perms": "",
+                        "icon": "",
+                        "meta": "",
+                        "childrenList": []
+                    }
+                ]
+            }
+        ]
+    }
 }
 ```
