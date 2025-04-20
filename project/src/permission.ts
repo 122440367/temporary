@@ -16,7 +16,6 @@ router.beforeEach(async (to, from, next) => {
     document.title = setting.title + '-' + to.meta.title; // 动态修改网页标题
     nprogress.start(); // 开始进度条
 
-    // 获取 token 和用户名
     const token = userStore.state.token;
     const username = userStore.state.username;
 
@@ -28,11 +27,10 @@ router.beforeEach(async (to, from, next) => {
                 next(); // 如果用户名存在，直接放行
             } else {
                 try {
-                    // 如果没有用户信息，尝试获取用户信息
-                    await userStore.userInfo(); 
-                    next(); // 放行
+                    // 获取用户信息并加载动态路由
+                    await userStore.userInfo();
+                    next({ ...to, replace: true }); // 确保动态路由生效
                 } catch (error) {
-                    // 如果获取用户信息失败（如 token 过期）
                     await userStore.userLogout(); // 清除 token
                     next({ path: '/login', query: { redirect: to.path } }); // 跳转到登录页面
                 }

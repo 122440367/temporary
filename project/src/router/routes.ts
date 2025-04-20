@@ -65,6 +65,10 @@ export const constantRoute = [
             title: '大屏展示',  //路由标题
         }
     },
+
+]
+
+export const asyncRoute = [
     {
         path: '/acl',
         component: () => import('@/layout/index.vue'),

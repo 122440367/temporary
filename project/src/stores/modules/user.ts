@@ -10,7 +10,22 @@ import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils/token';
 import { computed } from 'vue';
 
 //引入路由
-import { constantRoute } from '@/router/routes';
+import { asyncRoute, constantRoute } from '@/router/routes';
+import router from '@/router';
+
+function filterAsyncRoutes(asyncRoute: any[], menuList: string[]): any[] {
+    return asyncRoute.filter((route) => {
+        // 检查当前路由的 name 是否在 menuList 中
+        if (menuList.includes(route.name)) {
+            // 如果有子路由，递归过滤子路由
+            if (route.children) {
+                route.children = filterAsyncRoutes(route.children, menuList);
+            }
+            return true; // 保留该路由
+        }
+        return false; // 过滤掉该路由
+    });
+}
 
 //创建用户小仓库
 let useUserStore = defineStore('User', () => {
@@ -22,14 +37,12 @@ let useUserStore = defineStore('User', () => {
         avatar: '', // 头像
     });
 
-
     // 监听 localStorage 的变化
     window.addEventListener('storage', (event) => {
         if (event.key === 'TOKEN') {
             state.value.token = event.newValue || null; // 同步 token
         }
     });
-
 
     watch(
         () => state.value.token,
@@ -44,30 +57,44 @@ let useUserStore = defineStore('User', () => {
 
     // actions
     const userLogin = async (data: loginFormData) => {
-        // 登录请求
         let result: loginResponseData = await reqLogin(data);
 
-        if (result.code == 200) {
-            state.value.token = result.data.token ?? null; // 将token存储到state中
+        if (result.code === 200) {
+            state.value.token = result.data.token ?? null;
             SET_TOKEN(state.value.token || '');
 
-            console.log('登录成功');
-            return 'ok';
-        } else if (result.code == 201) {
-            // console.log('登录失败')
-            return Promise.reject(new Error(result.message)); // 返回失败的promise对象
-        }
-    };
-    const userInfo = async () => {
-        let result: userInfoResponseData = await reqUserInfo();
-        if (result.code == 200) {
-            state.value.username = result.data.userInf.loginId; // 将用户名存储到state中
-            state.value.avatar = result.data.userInf.avatar; // 将头像存储到state中
+            // 登录成功后获取用户信息并加载动态路由
+            await userInfo();
+
             return 'ok';
         } else {
-            return Promise.reject(new Error(result.message)); // 返回失败的promise对象
+            return Promise.reject(new Error(result.message));
         }
-    }
+    };
+
+    const userInfo = async () => {
+        let result: userInfoResponseData = await reqUserInfo();
+        if (result.code === 200) {
+            // 存储用户信息
+            state.value.username = result.data.userInf.loginId;
+            state.value.avatar = result.data.userInf.avatar;
+
+            // 过滤动态路由
+            let userAsyncRoute = filterAsyncRoutes(asyncRoute, result.data.menuList);
+
+            // 将动态路由和静态路由合并
+            state.value.menuRoutes = [...constantRoute, ...userAsyncRoute];
+
+            // 动态添加路由
+            userAsyncRoute.forEach((route) => {
+                router.addRoute(route);
+            });
+
+            return 'ok';
+        } else {
+            return Promise.reject(new Error(result.message));
+        }
+    };
 
     const userLogout = async () => {
         try {
@@ -90,7 +117,8 @@ let useUserStore = defineStore('User', () => {
     // getters
     const isLoggedIn = computed(() => !!state.value.token);
 
-    const menuRoutes = reactive(constantRoute); //仓库存储生成菜单需要的路由
+    // 使用 computed 包装 menuRoutes，确保其响应式
+    const menuRoutes = computed(() => state.value.menuRoutes);
 
     return {
         state,
@@ -102,4 +130,4 @@ let useUserStore = defineStore('User', () => {
     };
 });
 
-export default useUserStore
+export default useUserStore;
