@@ -11,7 +11,7 @@ import globalComponent from '@/components'
 import router from '@/router' //引入路由器对象
 import pinia from '@/stores' //引入仓库对象
 import './permission'
-
+import 'element-plus/theme-chalk/dark/css-vars.css'//引入暗黑模式样式
 const app = createApp(App)
 
 app.use(pinia)
