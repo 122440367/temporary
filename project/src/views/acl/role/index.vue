@@ -79,10 +79,7 @@
 import { reqAddRole, reqAssignMenu, reqDeleteRole, reqGetAllMenus, reqGetRoleMenus, reqGetRolePage, reqUpdateRole } from '@/api/acl/role';
 import type { Menu, Role } from '@/api/acl/role/type';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { nextTick, onMounted, ref } from 'vue';
-
-
-
+import {  onMounted, ref } from 'vue';
 
 let pageNo = ref(1);
 let pageSize = ref(8);

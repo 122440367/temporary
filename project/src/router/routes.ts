@@ -68,7 +68,7 @@ export const constantRoute = [
     {
         path: '/acl',
         component: () => import('@/layout/index.vue'),
-        name: 'acl',
+        name: 'Acl',
         redirect: '/acl/user',
         meta: {
             title: '权限管理',  //路由标题
@@ -78,7 +78,7 @@ export const constantRoute = [
             {
                 path: '/acl/user',
                 component: () => import('@/views/acl/user/index.vue'),
-                name: 'Acl',   //命名路由
+                name: 'User',   //命名路由
                 meta: {
                     title: '用户管理',  //路由标题
                     icon: 'User',  //路由图标
